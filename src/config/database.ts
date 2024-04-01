@@ -5,7 +5,7 @@ class DatabaseService {
   constructor() {
     this.connect()
   }
-  connect() {
+  connect(): void {
     mongoose
       .connect(process.env.MONGO_URL as string)
       .then(() => {

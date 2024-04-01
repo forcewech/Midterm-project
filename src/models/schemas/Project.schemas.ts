@@ -6,25 +6,19 @@ const projectSchema = new Schema({
     required: true
   },
   description: {
-    type: String,
-    required: true
+    type: String || null || undefined
   },
   slug: {
     type: String,
     required: true,
     unique: true
   },
-  start_date: {
+  startDate: {
     type: Date,
     required: true
   },
-  end_date: {
+  endDate: {
     type: Date,
-    required: true
-  },
-  createdBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
     required: true
   },
   participants: [

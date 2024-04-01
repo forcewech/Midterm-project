@@ -2,30 +2,26 @@ import mongoose, { Schema } from 'mongoose'
 
 const userSchema = new Schema({
   name: {
-    type: String,
-    required: true
+    type: String
   },
-  username: {
+  userName: {
     type: String,
     required: true,
     unique: true
   },
   password: {
     type: String,
-    required: true,
-    unique: true
+    required: true
   },
   email: {
-    type: String,
-    required: true
+    type: String
   },
   inviteid: {
-    type: String,
-    required: true
+    type: String
   },
-  date_of_birth: {
-    type: String,
-    required: true
+  dateOfBirth: {
+    type: Date,
+    default: new Date()
   },
   status: {
     type: String,
@@ -38,11 +34,11 @@ const userSchema = new Schema({
       ref: 'Project'
     }
   ],
-  created_at: {
+  createdAt: {
     type: Date,
     default: Date.now
   },
-  updated_at: {
+  updatedAt: {
     type: Date,
     default: null
   }

@@ -1,19 +1,19 @@
 import mongoose, { Schema } from 'mongoose'
 
-const typeSchema = new Schema({
+const prioritySchema = new Schema({
   name: {
     type: String,
     required: true
   },
-  color: {
-    type: String,
+  order: {
+    type: Number,
     required: true
   },
-  hidden: {
+  isHidden: {
     type: Boolean,
     default: false
   }
 })
-const Type = mongoose.model('Type', typeSchema)
+const Priority = mongoose.model('Priority', prioritySchema)
 
-export default Type
+export default Priority
