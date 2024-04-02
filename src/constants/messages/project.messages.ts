@@ -20,5 +20,10 @@ export const projectMessages = {
   GET_ALL_PROJECT_SUCCESS: 'Get all project success',
   GET_ALL_PROJECT_WITH_PAGINATE_SUCCESS: 'Get all project with paginate success',
   PAGE_IS_INVALID: 'Page is invalid',
-  LIMIT_IS_INVALID: 'Limit is invalid'
+  LIMIT_IS_INVALID: 'Limit is invalid',
+  ADD_PARTICIPANT_SUCCESS: 'Add participant success',
+  DELETE_PARTICIPANT_SUCCESS: 'Delete participant success',
+  PARTICIPANT_ALREADY_EXISTS: 'Participant already exists',
+  PARTICIPANT_ID_IS_INVALID: 'Participant id is invalid',
+  PARTICIPANT_ID_NOT_FOUND: 'Participant id not found'
 }

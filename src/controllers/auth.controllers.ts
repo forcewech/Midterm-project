@@ -24,17 +24,36 @@ class AuthController {
     try {
       const user = req.user
       const userId = user._id as ObjectId
-      const result = await authService.login(userId.toString())
+      const role = user.role
+      const result = await authService.login(userId.toString(), role)
       return res.json(result)
     } catch (error) {
       const err: Error = error as Error
       throw new Error(err.message)
     }
   }
-  async logout(req: Request<ParamsDictionary, any, ILogoutReqBody>, res: Response): Promise<Response<string>> {
+  async logout(
+    req: Request<ParamsDictionary, any, ILogoutReqBody>,
+    res: Response
+  ): Promise<Response<IResponseMessage<IToken>>> {
     try {
       const { refreshToken } = req.body
       const result = await authService.logout(refreshToken)
+      return res.json(result)
+    } catch (error) {
+      const err: Error = error as Error
+      throw new Error(err.message)
+    }
+  }
+  async refreshToken(
+    req: Request<ParamsDictionary, any, ILogoutReqBody>,
+    res: Response
+  ): Promise<Response<IResponseMessage<IToken>>> {
+    try {
+      const { refreshToken } = req.body
+      const userId = req.decoded_refresh_token?.user_id as string
+      const role = req.decoded_refresh_token?.role
+      const result = await authService.refreshToken(refreshToken, userId, role)
       return res.json(result)
     } catch (error) {
       const err: Error = error as Error

@@ -15,5 +15,15 @@ projectRouter.put('/:projectId', updateProjectValidator, accessTokenValidator, p
 projectRouter.delete('/:projectId', deleteProjectValidator, accessTokenValidator, projectController.delete)
 projectRouter.get('/:projectId', getProjectValidator, accessTokenValidator, projectController.getProject)
 projectRouter.get('/', getAllProjectValidator, accessTokenValidator, projectController.getAllProject)
-
+projectRouter.patch(
+  '/:projectId/participants/:participantId',
+  getProjectValidator,
+  accessTokenValidator,
+  projectController.addParticipant
+)
+projectRouter.delete(
+  '/:projectId/participants/:participantId',
+  accessTokenValidator,
+  projectController.deleteParticipant
+)
 export default projectRouter

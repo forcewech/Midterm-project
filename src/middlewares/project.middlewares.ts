@@ -1,6 +1,7 @@
 import { checkSchema } from 'express-validator'
 import { ObjectId } from 'mongodb'
 import { projectMessages } from '~/constants/messages/project.messages'
+import Project from '~/models/schemas/Project.schemas'
 import projectService from '~/services/project.services'
 import { validate } from '~/utils/validation'
 
@@ -172,5 +173,36 @@ export const getAllProjectValidator = validate(
       }
     },
     ['query']
+  )
+)
+export const checkParticipantValidator = validate(
+  checkSchema(
+    {
+      projectId: {
+        custom: {
+          options: async (value) => {
+            if (!ObjectId.isValid(value)) {
+              throw new Error(projectMessages.PROJECT_ID_IS_INVALID)
+            }
+            const isIdProject = await projectService.checkIdProjectExist(value)
+            if (!isIdProject) {
+              throw new Error(projectMessages.PROJECT_ID_NOT_FOUND)
+            }
+            return true
+          }
+        }
+      },
+      participantId: {
+        custom: {
+          options: async (value) => {
+            if (!ObjectId.isValid(value)) {
+              throw new Error(projectMessages.PARTICIPANT_ID_IS_INVALID)
+            }
+            return true
+          }
+        }
+      }
+    },
+    ['params']
   )
 )

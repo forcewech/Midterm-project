@@ -23,6 +23,11 @@ const userSchema = new Schema({
     type: Date,
     default: new Date()
   },
+  role: {
+    type: String,
+    enum: ['user', 'admin'],
+    default: 'user'
+  },
   status: {
     type: String,
     enum: ['active', 'inactive'],

@@ -16,10 +16,11 @@ import { hashPassword } from '~/utils/crypto'
 import { signToken } from '~/utils/jwt'
 
 class AuthService {
-  private async signAccessToken(userId: string): Promise<string> {
+  private async signAccessToken(userId: string, role: string): Promise<string> {
     return signToken({
       payload: {
         userId,
+        role,
         tokenType: ETokenType.ACCESS_TOKEN
       },
       privateKey: JWT_SECRET_ACCESS_TOKEN as string,
@@ -28,10 +29,11 @@ class AuthService {
       }
     })
   }
-  private async signRefreshToken(userId: string): Promise<string> {
+  private async signRefreshToken(userId: string, role: string): Promise<string> {
     return signToken({
       payload: {
         userId,
+        role,
         tokenType: ETokenType.REFRESH_TOKEN
       },
       privateKey: JWT_SECRET_REFRESH_TOKEN,
@@ -40,8 +42,8 @@ class AuthService {
       }
     })
   }
-  private async signAccessAndRefreshToken(userId: string): Promise<[string, string]> {
-    return await Promise.all([this.signAccessToken(userId), this.signRefreshToken(userId)])
+  private async signAccessAndRefreshToken(userId: string, role: string): Promise<[string, string]> {
+    return await Promise.all([this.signAccessToken(userId, role), this.signRefreshToken(userId, role)])
   }
   async checkUserNameExist(userName: string): Promise<boolean> {
     const user = await User.findOne({ userName })
@@ -53,7 +55,7 @@ class AuthService {
       password: hashPassword(payload.password)
     })
     await newUser.save()
-    const [accessToken, refreshToken] = await this.signAccessAndRefreshToken(newUser._id.toString())
+    const [accessToken, refreshToken] = await this.signAccessAndRefreshToken(newUser._id.toString(), newUser.role)
     const newRefreshToken = new RefreshToken({ userId: newUser._id, token: refreshToken })
     await newRefreshToken.save()
     return {
@@ -66,8 +68,8 @@ class AuthService {
       }
     }
   }
-  async login(userId: string): Promise<IResponseMessage<IToken>> {
-    const [accessToken, refreshToken] = await this.signAccessAndRefreshToken(userId)
+  async login(userId: string, role: string): Promise<IResponseMessage<IToken>> {
+    const [accessToken, refreshToken] = await this.signAccessAndRefreshToken(userId, role)
     const newRefreshToken = new RefreshToken({ userId: new ObjectId(userId), token: refreshToken })
     await newRefreshToken.save()
     return {
@@ -86,6 +88,21 @@ class AuthService {
       success: true,
       code: HTTP_STATUS.OK,
       message: authMessages.LOGOUT_SUCCESS
+    }
+  }
+  async refreshToken(refreshTokenOld: string, userId: string, role: string): Promise<IResponseMessage<IToken>> {
+    await RefreshToken.deleteOne({ token: refreshTokenOld })
+    const [accessToken, refreshToken] = await this.signAccessAndRefreshToken(userId, role)
+    const newRefreshToken = new RefreshToken({ userId: new ObjectId(userId), token: refreshToken })
+    await newRefreshToken.save()
+    return {
+      success: true,
+      code: HTTP_STATUS.OK,
+      message: authMessages.GET_ACCESS_TOKEN_AND_REFRESH_TOKEN_SUCCESS,
+      data: {
+        accessToken,
+        refreshToken
+      }
     }
   }
 }

@@ -30,10 +30,6 @@ class ProjectService {
     const projectId = await Project.findOne({ _id: new ObjectId(id) })
     return Boolean(projectId)
   }
-  async checkSlugProjectExist(slug: string): Promise<boolean> {
-    const projectSlug = await Project.findOne({ slug: slug })
-    return Boolean(projectSlug)
-  }
   async updateProjectById(
     projectId: string,
     updateData: CreateProjectReqBody
@@ -90,6 +86,60 @@ class ProjectService {
         message: projectMessages.GET_ALL_PROJECT_SUCCESS,
         data: getAllData
       }
+    }
+  }
+  async addParticipant(
+    projectId: string,
+    participant: ObjectId
+  ): Promise<IResponseMessage<InstanceType<typeof Project>>> {
+    const project = (await Project.findById({ _id: new ObjectId(projectId) })) as InstanceType<typeof Project>
+    let isParticipantExists = false
+    project.participants.forEach((item) => {
+      if (item.toString() === participant.toString()) {
+        isParticipantExists = true
+      }
+    })
+    if (isParticipantExists) {
+      return {
+        success: false,
+        code: HTTP_STATUS.CONFLICT,
+        message: projectMessages.PARTICIPANT_ALREADY_EXISTS
+      }
+    }
+    project.participants.push(participant)
+    project.save()
+    return {
+      success: true,
+      code: HTTP_STATUS.OK,
+      message: projectMessages.ADD_PARTICIPANT_SUCCESS
+    }
+  }
+  async deleteParticipant(
+    projectId: string,
+    participant: ObjectId
+  ): Promise<IResponseMessage<InstanceType<typeof Project>>> {
+    const project = (await Project.findById({ _id: new ObjectId(projectId) })) as InstanceType<typeof Project>
+    let isParticipantExists = false
+    project.participants.forEach((item) => {
+      if (item.toString() === participant.toString()) {
+        isParticipantExists = true
+      }
+    })
+    if (!isParticipantExists) {
+      return {
+        success: false,
+        code: HTTP_STATUS.NOT_FOUND,
+        message: projectMessages.PARTICIPANT_ID_NOT_FOUND
+      }
+    }
+    project.participants = project.participants.filter((item) => {
+      return item.toString() !== participant.toString()
+    })
+    await project.save()
+    return {
+      success: true,
+      code: HTTP_STATUS.OK,
+      message: projectMessages.DELETE_PARTICIPANT_SUCCESS
     }
   }
 }

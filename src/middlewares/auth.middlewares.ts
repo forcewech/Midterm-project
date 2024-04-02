@@ -8,6 +8,8 @@ import User from '~/models/schemas/User.schemas'
 import authService from '~/services/auth.services'
 import { hashPassword } from '~/utils/crypto'
 import { validate } from '~/utils/validation'
+import { verifyToken } from '~/utils/jwt'
+import { JsonWebTokenError } from 'jsonwebtoken'
 config()
 export const registerValidator = validate(
   checkSchema(
@@ -126,6 +128,19 @@ export const accessTokenValidator = validate(
                 message: authMessages.ACCESS_TOKEN_IS_REQUIRED
               })
             }
+            try {
+              const decoded_authorization = await verifyToken({
+                token: accessToken,
+                secretOnPublicKey: process.env.JWT_SECRET_ACCESS_TOKEN as string
+              })
+              req.decoded_authorization = decoded_authorization
+            } catch (error) {
+              throw new ErrorWithStatus({
+                success: false,
+                code: HTTP_STATUS.UNAUTHORIZED,
+                message: (error as JsonWebTokenError).message
+              })
+            }
             return true
           }
         }
@@ -155,6 +170,29 @@ export const refreshTokenValidator = validate(
                 code: HTTP_STATUS.UNAUTHORIZED,
                 message: authMessages.USED_REFRESH_TOKEN_OR_NOT_EXIST
               })
+            }
+            try {
+              const [decoded_refresh_token, refresh_token] = await Promise.all([
+                verifyToken({ token: value, secretOnPublicKey: process.env.JWT_SECRET_REFRESH_TOKEN as string }),
+                RefreshToken.findOne({ token: value })
+              ])
+              if (refresh_token == null) {
+                throw new ErrorWithStatus({
+                  success: false,
+                  code: HTTP_STATUS.UNAUTHORIZED,
+                  message: authMessages.USED_REFRESH_TOKEN_OR_NOT_EXIST
+                })
+              }
+              req.decoded_refresh_token = decoded_refresh_token
+            } catch (error) {
+              if (error instanceof JsonWebTokenError) {
+                throw new ErrorWithStatus({
+                  success: false,
+                  code: HTTP_STATUS.UNAUTHORIZED,
+                  message: error.message
+                })
+              }
+              throw error
             }
             return true
           }

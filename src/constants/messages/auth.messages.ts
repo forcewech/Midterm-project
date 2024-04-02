@@ -25,5 +25,6 @@ export const authMessages = {
   REFRESH_TOKEN_IS_INVALID: 'Refresh token is invalid',
   USED_REFRESH_TOKEN_OR_NOT_EXIST: 'Used refresh token or not exists',
   LOGOUT_SUCCESS: 'logout success',
-  USER_NOT_FOUND: 'User not found'
+  USER_NOT_FOUND: 'User not found',
+  GET_ACCESS_TOKEN_AND_REFRESH_TOKEN_SUCCESS: 'Get access token and refresh token success'
 } as const
