@@ -121,8 +121,9 @@ export const accessTokenValidator = validate(
             const accessToken = (value || '').split(' ')[1]
             if (!accessToken) {
               throw new ErrorWithStatus({
-                message: authMessages.ACCESS_TOKEN_IS_REQUIRED,
-                status: HTTP_STATUS.UNAUTHORIZED
+                success: false,
+                code: HTTP_STATUS.UNAUTHORIZED,
+                message: authMessages.ACCESS_TOKEN_IS_REQUIRED
               })
             }
             return true
@@ -142,15 +143,17 @@ export const refreshTokenValidator = validate(
           options: async (value: string, { req }) => {
             if (!value) {
               throw new ErrorWithStatus({
-                message: authMessages.REFRESH_TOKEN_IS_REQUIRED,
-                status: HTTP_STATUS.UNAUTHORIZED
+                success: false,
+                code: HTTP_STATUS.UNAUTHORIZED,
+                message: authMessages.REFRESH_TOKEN_IS_REQUIRED
               })
             }
             const refreshToken = await RefreshToken.findOne({ token: value })
             if (refreshToken == null) {
               throw new ErrorWithStatus({
-                message: authMessages.USED_REFRESH_TOKEN_OR_NOT_EXIST,
-                status: HTTP_STATUS.UNAUTHORIZED
+                success: false,
+                code: HTTP_STATUS.UNAUTHORIZED,
+                message: authMessages.USED_REFRESH_TOKEN_OR_NOT_EXIST
               })
             }
             return true

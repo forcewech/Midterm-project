@@ -16,5 +16,6 @@ export const projectMessages = {
   PROJECT_ID_IS_INVALID: 'Project id is invalid',
   PROJECT_SLUG_NOT_FOUND: 'Project slug not found',
   PROJECT_SLUG_IS_INVALID: 'Project slug is invalid',
-  GET_PROJECT_SUCCESS: 'Get project success'
+  GET_PROJECT_SUCCESS: 'Get project success',
+  GET_ALL_PROJECT_SUCCESS: 'Get all projct success'
 }

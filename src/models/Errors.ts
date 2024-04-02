@@ -10,18 +10,20 @@ type ErrorsType = Record<
 >
 
 export class ErrorWithStatus {
+  success: boolean
+  code: number
   message: string
-  status: number
-  constructor({ message, status }: { message: string; status: number }) {
+  constructor({ success, code, message }: { success: boolean; code: number; message: string }) {
+    this.success = success
+    this.code = code
     this.message = message
-    this.status = status
   }
 }
 
 export class EntityError extends ErrorWithStatus {
   errors: ErrorsType
   constructor({ errors }: { errors: ErrorsType }) {
-    super({ message: authMessages.VALIDATION_ERROR, status: httpStatus.UNPROCESSABLE_ETITY })
+    super({ success: false, code: httpStatus.UNPROCESSABLE_ETITY, message: authMessages.VALIDATION_ERROR })
     this.errors = errors
   }
 }

@@ -6,8 +6,10 @@ import {
   REFRESH_TOKEN_EXPIRES_IN
 } from '~/config/env-config'
 import { ETokenType } from '~/constants/enums'
+import HTTP_STATUS from '~/constants/httpStatus'
 import { authMessages } from '~/constants/messages/auth.messages'
-import { IRegisterReqBody, IToken } from '~/models/requests/Auth.requests'
+import { IResponseMessage } from '~/interfaces/reponses/response'
+import { IRegisterReqBody, IToken } from '~/interfaces/requests/Auth.requests'
 import RefreshToken from '~/models/schemas/RefreshToken.schemas'
 import User from '~/models/schemas/User.schemas'
 import { hashPassword } from '~/utils/crypto'
@@ -45,7 +47,7 @@ class AuthService {
     const user = await User.findOne({ userName })
     return Boolean(user)
   }
-  async register(payload: IRegisterReqBody): Promise<IToken> {
+  async register(payload: IRegisterReqBody): Promise<IResponseMessage<IToken>> {
     const newUser = new User({
       ...payload,
       password: hashPassword(payload.password)
@@ -55,24 +57,34 @@ class AuthService {
     const newRefreshToken = new RefreshToken({ userId: newUser._id, token: refreshToken })
     await newRefreshToken.save()
     return {
-      accessToken,
-      refreshToken
+      success: true,
+      code: HTTP_STATUS.OK,
+      message: authMessages.REGISTER_SUCCESS,
+      data: {
+        accessToken,
+        refreshToken
+      }
     }
   }
-  async login(userId: string): Promise<IToken> {
+  async login(userId: string): Promise<IResponseMessage<IToken>> {
     const [accessToken, refreshToken] = await this.signAccessAndRefreshToken(userId)
     const newRefreshToken = new RefreshToken({ userId: new ObjectId(userId), token: refreshToken })
     await newRefreshToken.save()
     return {
-      accessToken,
-      refreshToken
+      success: true,
+      code: HTTP_STATUS.OK,
+      message: authMessages.LOGIN_SUCCESS,
+      data: {
+        accessToken,
+        refreshToken
+      }
     }
   }
-  async logout(refreshToken: string): Promise<{
-    message: string
-  }> {
+  async logout(refreshToken: string): Promise<IResponseMessage<null>> {
     await RefreshToken.deleteOne({ token: refreshToken })
     return {
+      success: true,
+      code: HTTP_STATUS.OK,
       message: authMessages.LOGOUT_SUCCESS
     }
   }

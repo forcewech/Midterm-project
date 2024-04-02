@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from 'express'
-import { omit } from 'lodash'
 import httpStatus from '~/constants/httpStatus'
 import { ErrorWithStatus } from '~/models/Errors'
 
@@ -10,7 +9,7 @@ export function customErrorHandler(
   next: NextFunction
 ): Response<any, Record<string, any>> | undefined {
   if (err instanceof ErrorWithStatus) {
-    return res.status(err.status).json(omit(err, ['status']))
+    return res.status(err.code).json(err)
   }
   Object.getOwnPropertyNames(err).forEach((key) => {
     Object.defineProperty(err, key, { enumerable: true })

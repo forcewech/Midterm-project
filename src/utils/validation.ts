@@ -15,7 +15,7 @@ export const validate = (validation: RunnableValidationChains<ValidationChain>) 
     const entityError = new EntityError({ errors: {} })
     for (const key in errorsObject) {
       const { msg } = errorsObject[key]
-      if (msg instanceof ErrorWithStatus && msg.status !== httpStatus.UNPROCESSABLE_ETITY) {
+      if (msg instanceof ErrorWithStatus && msg.code !== httpStatus.UNPROCESSABLE_ETITY) {
         return next(msg)
       }
       entityError.errors[key] = errorsObject[key]

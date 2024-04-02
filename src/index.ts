@@ -22,8 +22,8 @@ app.use(bodyParser.urlencoded({ extended: false }))
 //Conect database
 databaseService
 //routing
-app.use('/auth', authRouter)
-app.use('/project', projectRouter)
+app.use('/v1/auth', authRouter)
+app.use('/v1/projects', projectRouter)
 //Handle error
 app.use(customErrorHandler)
 app.listen(PORT, () => {
