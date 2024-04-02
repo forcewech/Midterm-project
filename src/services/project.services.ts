@@ -72,6 +72,26 @@ class ProjectService {
       data: getData as InstanceType<typeof Project>
     }
   }
+  async getAllProject(page: number, pageSize: number): Promise<IResponseMessage<InstanceType<typeof Project>[]>> {
+    if (page && pageSize) {
+      const skip = (page - 1) * pageSize
+      const getAllDataWithPaginate = await Project.find({}).skip(skip).limit(pageSize)
+      return {
+        success: true,
+        code: HTTP_STATUS.OK,
+        message: projectMessages.GET_ALL_PROJECT_WITH_PAGINATE_SUCCESS,
+        data: getAllDataWithPaginate as InstanceType<typeof Project>[]
+      }
+    } else {
+      const getAllData = await Project.find({})
+      return {
+        success: true,
+        code: HTTP_STATUS.OK,
+        message: projectMessages.GET_ALL_PROJECT_SUCCESS,
+        data: getAllData
+      }
+    }
+  }
 }
 const projectService = new ProjectService()
 export default projectService

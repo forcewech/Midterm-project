@@ -1,16 +1,19 @@
 import { Router } from 'express'
 import projectController from '~/controllers/project.controllers'
+import { accessTokenValidator } from '~/middlewares/auth.middlewares'
 import {
   createProjectValidator,
   deleteProjectValidator,
+  getAllProjectValidator,
   getProjectValidator,
   updateProjectValidator
 } from '~/middlewares/project.middlewares'
 const projectRouter = Router()
 
-projectRouter.post('/', createProjectValidator, projectController.create)
-projectRouter.put('/:projectId', updateProjectValidator, projectController.update)
-projectRouter.delete('/:projectId', deleteProjectValidator, projectController.delete)
-projectRouter.get('/:projectId', getProjectValidator, projectController.getProject)
+projectRouter.post('/', createProjectValidator, accessTokenValidator, projectController.create)
+projectRouter.put('/:projectId', updateProjectValidator, accessTokenValidator, projectController.update)
+projectRouter.delete('/:projectId', deleteProjectValidator, accessTokenValidator, projectController.delete)
+projectRouter.get('/:projectId', getProjectValidator, accessTokenValidator, projectController.getProject)
+projectRouter.get('/', getAllProjectValidator, accessTokenValidator, projectController.getAllProject)
 
 export default projectRouter

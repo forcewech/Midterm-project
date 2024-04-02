@@ -51,6 +51,17 @@ class ProjectController {
       throw new Error(err.message)
     }
   }
+  async getAllProject(req: Request, res: Response): Promise<Response<IResponseMessage<typeof Project>[]>> {
+    try {
+      const page = parseInt(req.query.page as string)
+      const pageSize = parseInt(req.query.limit as string)
+      const result = await projectService.getAllProject(page, pageSize)
+      return res.json(result)
+    } catch (error) {
+      const err: Error = error as Error
+      throw new Error(err.message)
+    }
+  }
 }
 
 const projectController = new ProjectController()

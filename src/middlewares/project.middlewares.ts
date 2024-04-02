@@ -145,3 +145,32 @@ export const getProjectValidator = validate(
     ['params']
   )
 )
+export const getAllProjectValidator = validate(
+  checkSchema(
+    {
+      page: {
+        custom: {
+          options: async (value) => {
+            const regex = /^\d+$/
+            if (!regex.test(value)) {
+              throw new Error(projectMessages.PAGE_IS_INVALID)
+            }
+            return true
+          }
+        }
+      },
+      limit: {
+        custom: {
+          options: async (value) => {
+            const regex = /^\d+$/
+            if (!regex.test(value)) {
+              throw new Error(projectMessages.LIMIT_IS_INVALID)
+            }
+            return true
+          }
+        }
+      }
+    },
+    ['query']
+  )
+)

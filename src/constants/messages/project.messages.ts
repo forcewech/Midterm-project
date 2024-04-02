@@ -17,5 +17,8 @@ export const projectMessages = {
   PROJECT_SLUG_NOT_FOUND: 'Project slug not found',
   PROJECT_SLUG_IS_INVALID: 'Project slug is invalid',
   GET_PROJECT_SUCCESS: 'Get project success',
-  GET_ALL_PROJECT_SUCCESS: 'Get all projct success'
+  GET_ALL_PROJECT_SUCCESS: 'Get all project success',
+  GET_ALL_PROJECT_WITH_PAGINATE_SUCCESS: 'Get all project with paginate success',
+  PAGE_IS_INVALID: 'Page is invalid',
+  LIMIT_IS_INVALID: 'Limit is invalid'
 }
