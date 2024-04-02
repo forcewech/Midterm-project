@@ -1,0 +1,20 @@
+export const projectMessages = {
+  CREATE_PROJECT_SUCCESS: 'Create project success',
+  NAME_IS_REQUIRED: 'Name is required',
+  NAME_MUST_BE_A_STRING: 'Name must be a string',
+  SLUG_IS_REQUIRED: 'Slug is required',
+  SLUG_MUST_BE_A_STRING: 'Slug must be a string',
+  DATE_OF_BIRTH_MUST_BE_ISO8601: 'Date of birth must be ISO8601',
+  START_DATE_MUST_BE_ISO8601: 'Start date must be ISO8601',
+  END_DATE_MUST_BE_ISO8601: 'Start date must be ISO8601',
+  START_DATE_REQUIRED: 'Start date is required',
+  END_DATE_REQUIRED: 'End date is required',
+  NAME_PROJECT_ALREADY_EXISTS: 'Name project already exists',
+  UPDATE_PROJECT_SUCCESS: 'Update project success',
+  PROJECT_ID_NOT_FOUND: 'Project ID not found',
+  DELETE_PROJECT_SUCCESS: 'Delete project success',
+  PROJECT_ID_IS_INVALID: 'Project id is invalid',
+  PROJECT_SLUG_NOT_FOUND: 'Project slug not found',
+  PROJECT_SLUG_IS_INVALID: 'Project slug is invalid',
+  GET_PROJECT_SUCCESS: 'Get project success'
+}

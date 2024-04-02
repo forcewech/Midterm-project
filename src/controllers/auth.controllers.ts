@@ -1,15 +1,15 @@
 import { NextFunction, Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { ObjectId } from 'mongodb'
-import { authMessages } from '~/constants/messages'
+import { authMessages } from '~/constants/messages/auth.messages'
+import { IResponseMessage } from '~/models/reponses/response'
 import { ILoginReqBody, ILogoutReqBody, IRegisterReqBody, IToken } from '~/models/requests/Auth.requests'
 import authService from '~/services/auth.services'
 class AuthController {
   async register(
     req: Request<ParamsDictionary, any, IRegisterReqBody>,
-    res: Response,
-    next: NextFunction
-  ): Promise<Response<string, Record<string, IToken>> | undefined> {
+    res: Response
+  ): Promise<Response<IResponseMessage<IToken>>> {
     try {
       const result = await authService.register(req.body)
       return res.json({
@@ -17,14 +17,14 @@ class AuthController {
         result
       })
     } catch (error) {
-      next(error)
+      const err: Error = error as Error
+      throw new Error(err.message)
     }
   }
   async login(
     req: Request<ParamsDictionary, any, ILoginReqBody>,
-    res: Response,
-    next: NextFunction
-  ): Promise<Response<string, Record<string, IToken>> | undefined> {
+    res: Response
+  ): Promise<Response<IResponseMessage<IToken>>> {
     try {
       const user = req.user
       const userId = user._id as ObjectId
@@ -34,20 +34,18 @@ class AuthController {
         result
       })
     } catch (error) {
-      next(error)
+      const err: Error = error as Error
+      throw new Error(err.message)
     }
   }
-  async logout(
-    req: Request<ParamsDictionary, any, ILogoutReqBody>,
-    res: Response,
-    next: NextFunction
-  ): Promise<Response<string, Record<string, IToken>> | undefined> {
+  async logout(req: Request<ParamsDictionary, any, ILogoutReqBody>, res: Response): Promise<Response<string>> {
     try {
       const { refreshToken } = req.body
       const result = await authService.logout(refreshToken)
       return res.json(result)
     } catch (error) {
-      next(error)
+      const err: Error = error as Error
+      throw new Error(err.message)
     }
   }
 }

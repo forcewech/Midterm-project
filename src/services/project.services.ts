@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb'
 import slug from 'slug'
-import { projectMessages } from '~/constants/messages'
+import { projectMessages } from '~/constants/messages/project.messages'
 import { CreateProjectReqBody } from '~/models/requests/Project.requests'
 import Project from '~/models/schemas/Project.schemas'
 
@@ -55,10 +55,10 @@ class ProjectService {
       message: projectMessages.DELETE_PROJECT_SUCCESS
     }
   }
-  async getProjectBySlug(projectSlug: string): Promise<{ message: string; data: InstanceType<typeof Project> }> {
-    const getData = await Project.findOne({ slug: projectSlug as string })
+  async getProjectById(projectId: string): Promise<{ message: string; data: InstanceType<typeof Project> }> {
+    const getData = await Project.findById({ _id: new ObjectId(projectId) })
     return {
-      message: projectMessages.DELETE_PROJECT_SUCCESS,
+      message: projectMessages.GET_PROJECT_SUCCESS,
       data: getData as InstanceType<typeof Project>
     }
   }

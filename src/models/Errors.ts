@@ -1,5 +1,5 @@
 import httpStatus from '~/constants/httpStatus'
-import { authMessages } from '~/constants/messages'
+import { authMessages } from '~/constants/messages/auth.messages'
 
 type ErrorsType = Record<
   string,

@@ -7,9 +7,9 @@ import databaseService from './config/database'
 import authRouter from './routes/auth.routes'
 import { customErrorHandler } from './middlewares/error.middlewares'
 import projectRouter from './routes/project.routes'
+import { PORT } from './config/env-config'
 
 const app = express()
-const port = 8000
 //Midlleware app
 app.use(
   cors({
@@ -26,6 +26,6 @@ app.use('/auth', authRouter)
 app.use('/project', projectRouter)
 //Handle error
 app.use(customErrorHandler)
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`)
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`)
 })

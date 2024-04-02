@@ -1,4 +1,4 @@
-const httpStatus = {
+const HTTP_STATUS = {
   OK: 200,
   CREATED: 201,
   UNPROCESSABLE_ETITY: 422,
@@ -7,4 +7,4 @@ const httpStatus = {
   INTERNAL_SERVER_ERROR: 500
 }
 
-export default httpStatus
+export default HTTP_STATUS

@@ -11,6 +11,6 @@ const projectRouter = Router()
 projectRouter.post('/', createProjectValidator, projectController.create)
 projectRouter.put('/:projectId', updateProjectValidator, projectController.update)
 projectRouter.delete('/:projectId', deleteProjectValidator, projectController.delete)
-projectRouter.get('/:projectSlug', getProjectValidator, projectController.getProject)
+projectRouter.get('/:projectId', getProjectValidator, projectController.getProject)
 
 export default projectRouter

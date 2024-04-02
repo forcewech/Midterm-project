@@ -9,7 +9,7 @@ const statusSchema = new Schema({
     type: Number,
     required: true
   },
-  hidden: {
+  isHidden: {
     type: Boolean,
     default: false
   }

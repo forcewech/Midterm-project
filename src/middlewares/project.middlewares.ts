@@ -1,6 +1,6 @@
 import { checkSchema } from 'express-validator'
 import { ObjectId } from 'mongodb'
-import { projectMessages } from '~/constants/messages'
+import { projectMessages } from '~/constants/messages/project.messages'
 import projectService from '~/services/project.services'
 import { validate } from '~/utils/validation'
 
@@ -127,16 +127,15 @@ export const deleteProjectValidator = validate(
 export const getProjectValidator = validate(
   checkSchema(
     {
-      projectSlug: {
+      projectId: {
         custom: {
           options: async (value) => {
-            const regex = /^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/
-            if (!regex.test(value)) {
+            if (!ObjectId.isValid(value)) {
               throw new Error(projectMessages.PROJECT_ID_IS_INVALID)
             }
-            const isSlugProject = await projectService.checkSlugProjectExist(value)
-            if (!isSlugProject) {
-              throw new Error(projectMessages.PROJECT_SLUG_NOT_FOUND)
+            const isIdProject = await projectService.checkIdProjectExist(value)
+            if (!isIdProject) {
+              throw new Error(projectMessages.PROJECT_ID_NOT_FOUND)
             }
             return true
           }
