@@ -7,3 +7,5 @@ export const JWT_SECRET_ACCESS_TOKEN: string = process.env.JWT_SECRET_ACCESS_TOK
 export const JWT_SECRET_REFRESH_TOKEN: string = process.env.JWT_SECRET_REFRESH_TOKEN as string
 export const ACCESS_TOKEN_EXPIRES_IN: string = process.env.ACCESS_TOKEN_EXPIRES_IN as string
 export const REFRESH_TOKEN_EXPIRES_IN: string = process.env.REFRESH_TOKEN_EXPIRES_IN as string
+export const INVITE_SECRET_KEY: string = process.env.INVITE_SECRET_KEY as string
+export const INVITE_TOKEN_EXPIRES_IN: string = process.env.INVITE_TOKEN_EXPIRES_IN as string

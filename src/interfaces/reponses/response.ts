@@ -3,4 +3,7 @@ export interface IResponseMessage<T> {
   code: number
   message: string
   data?: T
+  totalItems?: number
+  totalPage?: number
+  currentPage?: number
 }

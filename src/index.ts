@@ -8,6 +8,7 @@ import authRouter from './routes/auth.routes'
 import { customErrorHandler } from './middlewares/error.middlewares'
 import projectRouter from './routes/project.routes'
 import { PORT } from './config/env-config'
+import userRouter from './routes/user.routes'
 
 const app = express()
 //Midlleware app
@@ -24,6 +25,7 @@ databaseService
 //routing
 app.use('/v1/auth', authRouter)
 app.use('/v1/projects', projectRouter)
+app.use('/v1/users', userRouter)
 //Handle error
 app.use(customErrorHandler)
 app.listen(PORT, () => {

@@ -1,4 +1,4 @@
-export interface CreateProjectReqBody {
+export interface ICreateProjectReqBody {
   name: string
   startDate: string
   endDate: string

@@ -1,15 +1,14 @@
 import { Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { ObjectId } from 'mongodb'
-import HTTP_STATUS from '~/constants/httpStatus'
 import { IResponseMessage } from '~/interfaces/reponses/response'
-import { CreateProjectReqBody } from '~/interfaces/requests/Project.requests'
+import { ICreateProjectReqBody } from '~/interfaces/requests/Project.requests'
 import Project from '~/models/schemas/Project.schemas'
 import projectService from '~/services/project.services'
 
 class ProjectController {
   async create(
-    req: Request<ParamsDictionary, any, CreateProjectReqBody>,
+    req: Request<ParamsDictionary, any, ICreateProjectReqBody>,
     res: Response
   ): Promise<Response<IResponseMessage<typeof Project>>> {
     try {
@@ -21,7 +20,7 @@ class ProjectController {
     }
   }
   async update(
-    req: Request<ParamsDictionary, any, CreateProjectReqBody>,
+    req: Request<ParamsDictionary, any, ICreateProjectReqBody>,
     res: Response
   ): Promise<Response<IResponseMessage<typeof Project>>> {
     try {

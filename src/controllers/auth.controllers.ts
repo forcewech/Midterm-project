@@ -10,7 +10,8 @@ class AuthController {
     res: Response
   ): Promise<Response<IResponseMessage<IToken>>> {
     try {
-      const result = await authService.register(req.body)
+      const projectId = req.decodedTokenInvite?.projectId
+      const result = await authService.register(req.body, new ObjectId(projectId))
       return res.json(result)
     } catch (error) {
       const err: Error = error as Error

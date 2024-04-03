@@ -16,7 +16,7 @@ const userSchema = new Schema({
   email: {
     type: String
   },
-  inviteid: {
+  inviteId: {
     type: String
   },
   dateOfBirth: {

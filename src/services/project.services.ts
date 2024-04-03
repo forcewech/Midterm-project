@@ -3,14 +3,15 @@ import slug from 'slug'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { projectMessages } from '~/constants/messages/project.messages'
 import { IResponseMessage } from '~/interfaces/reponses/response'
-import { CreateProjectReqBody } from '~/interfaces/requests/Project.requests'
+import { ICreateProjectReqBody } from '~/interfaces/requests/Project.requests'
 import Project from '~/models/schemas/Project.schemas'
+import { v4 as uuidv4 } from 'uuid'
 
 class ProjectService {
-  async createProject(payload: CreateProjectReqBody): Promise<IResponseMessage<InstanceType<typeof Project>>> {
+  async createProject(payload: ICreateProjectReqBody): Promise<IResponseMessage<InstanceType<typeof Project>>> {
     const newProject = new Project({
       ...payload,
-      slug: slug(payload.name),
+      slug: slug(`${payload.name} ${uuidv4()}`),
       startDate: new Date(payload.startDate),
       endDate: new Date(payload.endDate)
     })
@@ -32,13 +33,13 @@ class ProjectService {
   }
   async updateProjectById(
     projectId: string,
-    updateData: CreateProjectReqBody
+    updateData: ICreateProjectReqBody
   ): Promise<IResponseMessage<InstanceType<typeof Project>>> {
     const updateProjectData = await Project.findByIdAndUpdate(
       { _id: new ObjectId(projectId) },
       {
         ...updateData,
-        slug: slug(updateData.name),
+        slug: slug(`${updateData.name} ${uuidv4()}`),
         startDate: new Date(updateData.startDate),
         endDate: new Date(updateData.endDate)
       },
@@ -69,25 +70,34 @@ class ProjectService {
     }
   }
   async getAllProject(page: number, pageSize: number): Promise<IResponseMessage<InstanceType<typeof Project>[]>> {
+    const totalItems = await Project.countDocuments({})
     if (page && pageSize) {
+      const totalPage = Math.ceil(totalItems / pageSize)
       const skip = (page - 1) * pageSize
       const getAllDataWithPaginate = await Project.find({}).skip(skip).limit(pageSize)
       return {
         success: true,
         code: HTTP_STATUS.OK,
         message: projectMessages.GET_ALL_PROJECT_WITH_PAGINATE_SUCCESS,
-        data: getAllDataWithPaginate as InstanceType<typeof Project>[]
+        data: getAllDataWithPaginate,
+        totalItems,
+        totalPage,
+        currentPage: page
       }
     } else {
       const defaultPageSize = 10
       const defaultPage = 1
+      const totalDefaultPage = Math.ceil(totalItems / defaultPageSize)
       const defaultSkip = (defaultPage - 1) * defaultPageSize
       const getAllData = await Project.find({}).skip(defaultSkip).limit(defaultPageSize)
       return {
         success: true,
         code: HTTP_STATUS.OK,
         message: projectMessages.GET_ALL_PROJECT_SUCCESS,
-        data: getAllData
+        data: getAllData,
+        totalItems,
+        totalPage: totalDefaultPage,
+        currentPage: defaultPage
       }
     }
   }

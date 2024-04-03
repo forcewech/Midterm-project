@@ -7,3 +7,8 @@ export enum EUserRole {
   ADMIN = 'admin',
   USER = 'user'
 }
+
+export enum EStatus {
+  ACTIVE = 'active',
+  INACTIVE = 'inactive'
+}

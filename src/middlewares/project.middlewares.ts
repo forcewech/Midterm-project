@@ -1,9 +1,12 @@
 import { checkSchema } from 'express-validator'
 import { ObjectId } from 'mongodb'
 import { projectMessages } from '~/constants/messages/project.messages'
-import Project from '~/models/schemas/Project.schemas'
 import projectService from '~/services/project.services'
+import { ParamsDictionary } from 'express-serve-static-core'
 import { validate } from '~/utils/validation'
+import { NextFunction, Request, RequestHandler, Response } from 'express'
+import { ICreateProjectReqBody } from '~/interfaces/requests/Project.requests'
+import HTTP_STATUS from '~/constants/httpStatus'
 
 export const createProjectValidator = validate(
   checkSchema(
@@ -87,45 +90,11 @@ export const updateProjectValidator = validate(
         },
         errorMessage: projectMessages.END_DATE_MUST_BE_ISO8601
       }
-    },
-    projectId: {
-      custom: {
-        options: async (value) => {
-          if (!ObjectId.isValid(value)) {
-            throw new Error(projectMessages.PROJECT_ID_IS_INVALID)
-          }
-          const isIdProject = await projectService.checkIdProjectExist(value)
-          if (!isIdProject) {
-            throw new Error(projectMessages.PROJECT_ID_NOT_FOUND)
-          }
-          return true
-        }
-      }
     }
   })
 )
-export const deleteProjectValidator = validate(
-  checkSchema(
-    {
-      projectId: {
-        custom: {
-          options: async (value) => {
-            if (!ObjectId.isValid(value)) {
-              throw new Error(projectMessages.PROJECT_ID_IS_INVALID)
-            }
-            const isIdProject = await projectService.checkIdProjectExist(value)
-            if (!isIdProject) {
-              throw new Error(projectMessages.PROJECT_ID_NOT_FOUND)
-            }
-            return true
-          }
-        }
-      }
-    },
-    ['params']
-  )
-)
-export const getProjectValidator = validate(
+
+export const checkProjectIdValidator = validate(
   checkSchema(
     {
       projectId: {
@@ -206,3 +175,23 @@ export const checkParticipantValidator = validate(
     ['params']
   )
 )
+export const checkDateValidator: RequestHandler = (
+  req: Request<ParamsDictionary, any, ICreateProjectReqBody>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const data = req.body
+    if (data.startDate > data.endDate) {
+      return res.status(422).json({
+        success: false,
+        code: HTTP_STATUS.UNPROCESSABLE_ETITY,
+        message: projectMessages.START_DATE_CANNOT_BE_AFTER_END_DATE
+      })
+    }
+    next()
+  } catch (error) {
+    const err: Error = error as Error
+    throw new Error(err.message)
+  }
+}

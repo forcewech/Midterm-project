@@ -3,47 +3,56 @@ import projectController from '~/controllers/project.controllers'
 import { accessTokenValidator, checkAuthValidator } from '~/middlewares/auth.middlewares'
 import {
   createProjectValidator,
-  deleteProjectValidator,
   getAllProjectValidator,
-  getProjectValidator,
-  updateProjectValidator
+  checkProjectIdValidator,
+  updateProjectValidator,
+  checkDateValidator
 } from '~/middlewares/project.middlewares'
 const projectRouter = Router()
 
-projectRouter.post('/', createProjectValidator, accessTokenValidator, checkAuthValidator, projectController.create)
-projectRouter.put(
-  '/:projectId',
-  updateProjectValidator,
+projectRouter.post(
+  '/',
   accessTokenValidator,
   checkAuthValidator,
+  createProjectValidator,
+  checkDateValidator,
+  projectController.create
+)
+projectRouter.put(
+  '/:projectId',
+  accessTokenValidator,
+  checkAuthValidator,
+  checkProjectIdValidator,
+  updateProjectValidator,
+  checkDateValidator,
   projectController.update
 )
 projectRouter.delete(
   '/:projectId',
-  deleteProjectValidator,
   accessTokenValidator,
   checkAuthValidator,
+  checkProjectIdValidator,
   projectController.delete
 )
 projectRouter.get(
   '/:projectId',
-  getProjectValidator,
   accessTokenValidator,
   checkAuthValidator,
+  checkProjectIdValidator,
   projectController.getProject
 )
 projectRouter.get(
   '/',
-  getAllProjectValidator,
   accessTokenValidator,
   checkAuthValidator,
+  getAllProjectValidator,
   projectController.getAllProject
 )
 projectRouter.patch(
   '/:projectId/participants/:participantId',
-  getProjectValidator,
   accessTokenValidator,
   checkAuthValidator,
+  checkProjectIdValidator,
   projectController.addParticipant
 )
 projectRouter.delete(

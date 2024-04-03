@@ -10,6 +10,8 @@ import HTTP_STATUS from '~/constants/httpStatus'
 import { authMessages } from '~/constants/messages/auth.messages'
 import { IResponseMessage } from '~/interfaces/reponses/response'
 import { IRegisterReqBody, IToken } from '~/interfaces/requests/Auth.requests'
+import InviteId from '~/models/schemas/InviteId.schemas'
+import Project from '~/models/schemas/Project.schemas'
 import RefreshToken from '~/models/schemas/RefreshToken.schemas'
 import User from '~/models/schemas/User.schemas'
 import { hashPassword } from '~/utils/crypto'
@@ -49,15 +51,21 @@ class AuthService {
     const user = await User.findOne({ userName })
     return Boolean(user)
   }
-  async register(payload: IRegisterReqBody): Promise<IResponseMessage<IToken>> {
+  async register(payload: IRegisterReqBody, projectId: ObjectId): Promise<IResponseMessage<IToken>> {
+    if (!Array.isArray(payload.projects)) {
+      payload.projects = []
+    }
     const newUser = new User({
       ...payload,
+      projects: [...payload.projects, projectId],
       password: hashPassword(payload.password)
     })
     await newUser.save()
+    await Project.findByIdAndUpdate({ _id: projectId }, { $push: { participants: newUser._id } }, { new: true })
     const [accessToken, refreshToken] = await this.signAccessAndRefreshToken(newUser._id.toString(), newUser.role)
     const newRefreshToken = new RefreshToken({ userId: newUser._id, token: refreshToken })
     await newRefreshToken.save()
+    await InviteId.findOneAndUpdate({ code: payload.inviteId }, { status: 'inactive' }, { new: true })
     return {
       success: true,
       code: HTTP_STATUS.OK,
