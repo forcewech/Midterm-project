@@ -152,7 +152,7 @@ export const getAllProjectValidator = validate(
       page: {
         custom: {
           options: async (value) => {
-            const regex = /^\d+$/
+            const regex = /(\d*)/
             if (!regex.test(value)) {
               throw new Error(projectMessages.PAGE_IS_INVALID)
             }
@@ -163,7 +163,7 @@ export const getAllProjectValidator = validate(
       limit: {
         custom: {
           options: async (value) => {
-            const regex = /^\d+$/
+            const regex = /(\d*)/
             if (!regex.test(value)) {
               throw new Error(projectMessages.LIMIT_IS_INVALID)
             }

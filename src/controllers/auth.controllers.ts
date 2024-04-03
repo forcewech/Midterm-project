@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express'
+import { Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { ObjectId } from 'mongodb'
 import { IResponseMessage } from '~/interfaces/reponses/response'
@@ -51,8 +51,8 @@ class AuthController {
   ): Promise<Response<IResponseMessage<IToken>>> {
     try {
       const { refreshToken } = req.body
-      const userId = req.decoded_refresh_token?.user_id as string
-      const role = req.decoded_refresh_token?.role
+      const userId = req.decodedRefreshToken?.user_id as string
+      const role = req.decodedRefreshToken?.role
       const result = await authService.refreshToken(refreshToken, userId, role)
       return res.json(result)
     } catch (error) {

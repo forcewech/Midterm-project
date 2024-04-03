@@ -13,10 +13,6 @@ class ProjectController {
     res: Response
   ): Promise<Response<IResponseMessage<typeof Project>>> {
     try {
-      const userRole = req.decoded_authorization?.role
-      if (userRole !== 'admin') {
-        return res.status(403).json({ success: false, code: HTTP_STATUS.FORBIDDEN, message: 'Forbidden Access denied' })
-      }
       const result = await projectService.createProject(req.body)
       return res.status(201).json(result)
     } catch (error) {
@@ -29,10 +25,6 @@ class ProjectController {
     res: Response
   ): Promise<Response<IResponseMessage<typeof Project>>> {
     try {
-      const userRole = req.decoded_authorization?.role
-      if (userRole !== 'admin') {
-        return res.status(403).json({ success: false, code: HTTP_STATUS.FORBIDDEN, message: 'Forbidden Access denied' })
-      }
       const projectId = req.params.projectId
       const result = await projectService.updateProjectById(projectId, req.body)
       return res.json(result)
@@ -43,10 +35,6 @@ class ProjectController {
   }
   async delete(req: Request, res: Response): Promise<Response<IResponseMessage<typeof Project>>> {
     try {
-      const userRole = req.decoded_authorization?.role
-      if (userRole !== 'admin') {
-        return res.status(403).json({ success: false, code: HTTP_STATUS.FORBIDDEN, message: 'Forbidden Access denied' })
-      }
       const projectId = req.params.projectId
       const result = await projectService.deleteProjectById(projectId)
       return res.json(result)
@@ -57,10 +45,6 @@ class ProjectController {
   }
   async getProject(req: Request, res: Response): Promise<Response<IResponseMessage<typeof Project>>> {
     try {
-      const userRole = req.decoded_authorization?.role
-      if (userRole !== 'admin') {
-        return res.status(403).json({ success: false, code: HTTP_STATUS.FORBIDDEN, message: 'Forbidden Access denied' })
-      }
       const projectId = req.params.projectId
       const result = await projectService.getProjectById(projectId)
       return res.json(result)
@@ -71,10 +55,6 @@ class ProjectController {
   }
   async getAllProject(req: Request, res: Response): Promise<Response<IResponseMessage<typeof Project>[]>> {
     try {
-      const userRole = req.decoded_authorization?.role
-      if (userRole !== 'admin') {
-        return res.status(403).json({ success: false, code: HTTP_STATUS.FORBIDDEN, message: 'Forbidden Access denied' })
-      }
       const page = parseInt(req.query.page as string)
       const pageSize = parseInt(req.query.limit as string)
       const result = await projectService.getAllProject(page, pageSize)

@@ -9,7 +9,9 @@ import authService from '~/services/auth.services'
 import { hashPassword } from '~/utils/crypto'
 import { validate } from '~/utils/validation'
 import { verifyToken } from '~/utils/jwt'
+import { NextFunction, Request, Response, RequestHandler } from 'express'
 import { JsonWebTokenError } from 'jsonwebtoken'
+import { EUserRole } from '~/constants/enums'
 config()
 export const registerValidator = validate(
   checkSchema(
@@ -129,11 +131,11 @@ export const accessTokenValidator = validate(
               })
             }
             try {
-              const decoded_authorization = await verifyToken({
+              const decodedAuthorization = await verifyToken({
                 token: accessToken,
                 secretOnPublicKey: process.env.JWT_SECRET_ACCESS_TOKEN as string
               })
-              req.decoded_authorization = decoded_authorization
+              req.decodedAuthorization = decodedAuthorization
             } catch (error) {
               throw new ErrorWithStatus({
                 success: false,
@@ -172,18 +174,18 @@ export const refreshTokenValidator = validate(
               })
             }
             try {
-              const [decoded_refresh_token, refresh_token] = await Promise.all([
+              const [decodedRefreshToken, refreshToken] = await Promise.all([
                 verifyToken({ token: value, secretOnPublicKey: process.env.JWT_SECRET_REFRESH_TOKEN as string }),
                 RefreshToken.findOne({ token: value })
               ])
-              if (refresh_token == null) {
+              if (refreshToken == null) {
                 throw new ErrorWithStatus({
                   success: false,
                   code: HTTP_STATUS.UNAUTHORIZED,
                   message: authMessages.USED_REFRESH_TOKEN_OR_NOT_EXIST
                 })
               }
-              req.decoded_refresh_token = decoded_refresh_token
+              req.decodedRefreshToken = decodedRefreshToken
             } catch (error) {
               if (error instanceof JsonWebTokenError) {
                 throw new ErrorWithStatus({
@@ -202,3 +204,15 @@ export const refreshTokenValidator = validate(
     ['body']
   )
 )
+export const checkAuthValidator: RequestHandler = (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userRole = req.decodedAuthorization?.role
+    if (userRole !== EUserRole.ADMIN) {
+      return res.status(403).json({ success: false, code: HTTP_STATUS.FORBIDDEN, message: 'Forbidden Access denied' })
+    }
+    next()
+  } catch (error) {
+    const err: Error = error as Error
+    throw new Error(err.message)
+  }
+}

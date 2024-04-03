@@ -79,7 +79,10 @@ class ProjectService {
         data: getAllDataWithPaginate as InstanceType<typeof Project>[]
       }
     } else {
-      const getAllData = await Project.find({})
+      const defaultPageSize = 10
+      const defaultPage = 1
+      const defaultSkip = (defaultPage - 1) * defaultPageSize
+      const getAllData = await Project.find({}).skip(defaultSkip).limit(defaultPageSize)
       return {
         success: true,
         code: HTTP_STATUS.OK,
