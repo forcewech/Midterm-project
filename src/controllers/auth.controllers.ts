@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { ObjectId } from 'mongodb'
+import { client } from '~/config/connectRedis'
 import { IResponseMessage } from '~/interfaces/reponses/response'
 import { ILoginReqBody, ILogoutReqBody, IRegisterReqBody, IToken } from '~/interfaces/requests/Auth.requests'
 import authService from '~/services/auth.services'
@@ -39,6 +40,8 @@ class AuthController {
   ): Promise<Response<IResponseMessage<IToken>>> {
     try {
       const { refreshToken } = req.body
+      const accessToken = req.headers.authorization?.split(' ')[1]
+      await client.del(`user_${accessToken}`)
       const result = await authService.logout(refreshToken)
       return res.json(result)
     } catch (error) {

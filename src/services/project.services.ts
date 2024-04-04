@@ -71,34 +71,17 @@ class ProjectService {
   }
   async getAllProject(page: number, pageSize: number): Promise<IResponseMessage<InstanceType<typeof Project>[]>> {
     const totalItems = await Project.countDocuments({})
-    if (page && pageSize) {
-      const totalPage = Math.ceil(totalItems / pageSize)
-      const skip = (page - 1) * pageSize
-      const getAllDataWithPaginate = await Project.find({}).skip(skip).limit(pageSize)
-      return {
-        success: true,
-        code: HTTP_STATUS.OK,
-        message: projectMessages.GET_ALL_PROJECT_WITH_PAGINATE_SUCCESS,
-        data: getAllDataWithPaginate,
-        totalItems,
-        totalPage,
-        currentPage: page
-      }
-    } else {
-      const defaultPageSize = 10
-      const defaultPage = 1
-      const totalDefaultPage = Math.ceil(totalItems / defaultPageSize)
-      const defaultSkip = (defaultPage - 1) * defaultPageSize
-      const getAllData = await Project.find({}).skip(defaultSkip).limit(defaultPageSize)
-      return {
-        success: true,
-        code: HTTP_STATUS.OK,
-        message: projectMessages.GET_ALL_PROJECT_SUCCESS,
-        data: getAllData,
-        totalItems,
-        totalPage: totalDefaultPage,
-        currentPage: defaultPage
-      }
+    const totalPage = Math.ceil(totalItems / pageSize)
+    const skip = (page - 1) * pageSize
+    const getAllDataWithPaginate = await Project.find({}).skip(skip).limit(pageSize)
+    return {
+      success: true,
+      code: HTTP_STATUS.OK,
+      message: projectMessages.GET_ALL_PROJECT_WITH_PAGINATE_SUCCESS,
+      data: getAllDataWithPaginate,
+      totalItems,
+      totalPage,
+      currentPage: page
     }
   }
   async addParticipant(

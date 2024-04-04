@@ -9,6 +9,7 @@ import { customErrorHandler } from './middlewares/error.middlewares'
 import projectRouter from './routes/project.routes'
 import { PORT } from './config/env-config'
 import userRouter from './routes/user.routes'
+import { client, connectRedis } from './config/connectRedis'
 
 const app = express()
 //Midlleware app
@@ -20,8 +21,10 @@ app.use(
 app.use(compression())
 app.use(cookieParser())
 app.use(bodyParser.urlencoded({ extended: false }))
+
 //Conect database
 databaseService
+connectRedis()
 //routing
 app.use('/v1/auth', authRouter)
 app.use('/v1/projects', projectRouter)

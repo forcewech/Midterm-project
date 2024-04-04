@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
+import { defaultLimit, defaultPage } from '~/constants/constant'
 import { IResponseMessage } from '~/interfaces/reponses/response'
 import { IUpdateUser } from '~/interfaces/requests/User.requests'
 import InviteId from '~/models/schemas/InviteId.schemas'
@@ -17,8 +18,8 @@ class UserController {
   }
   async getAllUser(req: Request, res: Response): Promise<Response<IResponseMessage<typeof User>[]>> {
     try {
-      const page = parseInt(req.query.page as string)
-      const pageSize = parseInt(req.query.limit as string)
+      const page = parseInt(req.query.page as string) || defaultPage
+      const pageSize = parseInt(req.query.limit as string) || defaultLimit
       const result = await userService.getAllUser(page, pageSize)
       return res.json(result)
     } catch (error) {

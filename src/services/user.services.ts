@@ -33,34 +33,17 @@ class UserService {
   }
   async getAllUser(page: number, pageSize: number): Promise<IResponseMessage<InstanceType<typeof User>[]>> {
     const totalItems = await User.countDocuments({})
-    if (page && pageSize) {
-      const totalPage = Math.ceil(totalItems / pageSize)
-      const skip = (page - 1) * pageSize
-      const getAllDataWithPaginate = await User.find({}).skip(skip).limit(pageSize)
-      return {
-        success: true,
-        code: HTTP_STATUS.OK,
-        message: userMessages.GET_ALL_USER_WITH_PAGINATE_SUCCESS,
-        data: getAllDataWithPaginate as InstanceType<typeof User>[],
-        totalItems,
-        totalPage,
-        currentPage: page
-      }
-    } else {
-      const defaultPageSize = 10
-      const defaultPage = 1
-      const totalDefaultPage = Math.ceil(totalItems / defaultPageSize)
-      const defaultSkip = (defaultPage - 1) * defaultPageSize
-      const getAllData = await User.find({}).skip(defaultSkip).limit(defaultPageSize)
-      return {
-        success: true,
-        code: HTTP_STATUS.OK,
-        message: userMessages.GET_ALL_PROJECT_SUCCESS,
-        data: getAllData,
-        totalItems,
-        totalPage: totalDefaultPage,
-        currentPage: defaultPage
-      }
+    const totalPage = Math.ceil(totalItems / pageSize)
+    const skip = (page - 1) * pageSize
+    const getAllDataWithPaginate = await User.find({}).skip(skip).limit(pageSize)
+    return {
+      success: true,
+      code: HTTP_STATUS.OK,
+      message: userMessages.GET_ALL_USER_WITH_PAGINATE_SUCCESS,
+      data: getAllDataWithPaginate as InstanceType<typeof User>[],
+      totalItems,
+      totalPage,
+      currentPage: page
     }
   }
   async checkIdUserExist(id: string): Promise<boolean> {

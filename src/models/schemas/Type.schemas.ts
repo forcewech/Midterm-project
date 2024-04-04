@@ -11,7 +11,7 @@ const typeSchema = new Schema({
   },
   isHidden: {
     type: Boolean,
-    default: false
+    default: true
   }
 })
 const Type = mongoose.model('Type', typeSchema)

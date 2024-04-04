@@ -83,6 +83,16 @@ export const updateUserValidator = validate(
           },
           errorMessage: userMessages.DATE_OF_BIRTH_MUST_BE_ISO8601
         }
+      },
+      status: {
+        custom: {
+          options: async (value) => {
+            if (value !== 'active' && value !== 'inactive') {
+              throw new Error(userMessages.STATUS_IS_INVALID)
+            }
+            return true
+          }
+        }
       }
     },
     ['body']

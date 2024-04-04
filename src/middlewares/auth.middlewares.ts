@@ -3,6 +3,7 @@ import { NextFunction, Request, RequestHandler, Response } from 'express'
 import { checkSchema } from 'express-validator'
 import { JsonWebTokenError } from 'jsonwebtoken'
 import { ErrorWithStatus } from '~/common/Errors'
+import { client } from '~/config/connectRedis'
 import { INVITE_SECRET_KEY, JWT_SECRET_ACCESS_TOKEN, JWT_SECRET_REFRESH_TOKEN } from '~/config/env-config'
 import { EStatus, EUserRole } from '~/constants/enums'
 import HTTP_STATUS from '~/constants/httpStatus'
@@ -175,6 +176,14 @@ export const accessTokenValidator = validate(
                 success: false,
                 code: HTTP_STATUS.UNAUTHORIZED,
                 message: authMessages.ACCESS_TOKEN_IS_REQUIRED
+              })
+            }
+            const data = await client.get(`user_${accessToken}`)
+            if (!data) {
+              throw new ErrorWithStatus({
+                success: false,
+                code: HTTP_STATUS.UNAUTHORIZED,
+                message: authMessages.FORBIDDEN_ACCESS_DENIED
               })
             }
             try {

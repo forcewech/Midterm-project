@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { ObjectId } from 'mongodb'
+import { defaultLimit, defaultPage } from '~/constants/constant'
 import { IResponseMessage } from '~/interfaces/reponses/response'
 import { ICreateProjectReqBody } from '~/interfaces/requests/Project.requests'
 import Project from '~/models/schemas/Project.schemas'
@@ -54,8 +55,8 @@ class ProjectController {
   }
   async getAllProject(req: Request, res: Response): Promise<Response<IResponseMessage<typeof Project>[]>> {
     try {
-      const page = parseInt(req.query.page as string)
-      const pageSize = parseInt(req.query.limit as string)
+      const page = parseInt(req.query.page as string) || defaultPage
+      const pageSize = parseInt(req.query.limit as string) || defaultLimit
       const result = await projectService.getAllProject(page, pageSize)
       return res.json(result)
     } catch (error) {

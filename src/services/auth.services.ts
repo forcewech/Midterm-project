@@ -1,4 +1,5 @@
 import { ObjectId } from 'mongodb'
+import { client } from '~/config/connectRedis'
 import {
   ACCESS_TOKEN_EXPIRES_IN,
   JWT_SECRET_ACCESS_TOKEN,
@@ -63,6 +64,8 @@ class AuthService {
     await newUser.save()
     await Project.findByIdAndUpdate({ _id: projectId }, { $push: { participants: newUser._id } }, { new: true })
     const [accessToken, refreshToken] = await this.signAccessAndRefreshToken(newUser._id.toString(), newUser.role)
+    const key = `user_${accessToken}`
+    await client.set(key, accessToken)
     const newRefreshToken = new RefreshToken({ userId: newUser._id, token: refreshToken })
     await newRefreshToken.save()
     await InviteId.findOneAndUpdate({ code: payload.inviteId }, { status: 'inactive' }, { new: true })
@@ -78,6 +81,8 @@ class AuthService {
   }
   async login(userId: string, role: string): Promise<IResponseMessage<IToken>> {
     const [accessToken, refreshToken] = await this.signAccessAndRefreshToken(userId, role)
+    const key = `user_${accessToken}`
+    await client.set(key, accessToken)
     const newRefreshToken = new RefreshToken({ userId: new ObjectId(userId), token: refreshToken })
     await newRefreshToken.save()
     return {
@@ -101,6 +106,8 @@ class AuthService {
   async refreshToken(refreshTokenOld: string, userId: string, role: string): Promise<IResponseMessage<IToken>> {
     await RefreshToken.deleteOne({ token: refreshTokenOld })
     const [accessToken, refreshToken] = await this.signAccessAndRefreshToken(userId, role)
+    const key = `user_${accessToken}`
+    await client.set(key, accessToken)
     const newRefreshToken = new RefreshToken({ userId: new ObjectId(userId), token: refreshToken })
     await newRefreshToken.save()
     return {
