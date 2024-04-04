@@ -5,7 +5,7 @@ import projectService from '~/services/project.services'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { validate } from '~/utils/validation'
 import { NextFunction, Request, RequestHandler, Response } from 'express'
-import { ICreateProjectReqBody } from '~/interfaces/requests/Project.requests'
+import { IProjectReqBody } from '~/interfaces/requests/Project.requests'
 import HTTP_STATUS from '~/constants/httpStatus'
 
 export const createProjectValidator = validate(
@@ -176,7 +176,7 @@ export const checkParticipantValidator = validate(
   )
 )
 export const checkDateValidator: RequestHandler = (
-  req: Request<ParamsDictionary, any, ICreateProjectReqBody>,
+  req: Request<ParamsDictionary, any, IProjectReqBody>,
   res: Response,
   next: NextFunction
 ) => {

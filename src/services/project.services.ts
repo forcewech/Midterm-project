@@ -3,12 +3,12 @@ import slug from 'slug'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { projectMessages } from '~/constants/messages/project.messages'
 import { IResponseMessage } from '~/interfaces/reponses/response'
-import { ICreateProjectReqBody } from '~/interfaces/requests/Project.requests'
+import { IProjectReqBody } from '~/interfaces/requests/Project.requests'
 import Project from '~/models/schemas/Project.schemas'
 import { v4 as uuidv4 } from 'uuid'
 
 class ProjectService {
-  async createProject(payload: ICreateProjectReqBody): Promise<IResponseMessage<InstanceType<typeof Project>>> {
+  async createProject(payload: IProjectReqBody): Promise<IResponseMessage<InstanceType<typeof Project>>> {
     const newProject = new Project({
       ...payload,
       slug: slug(`${payload.name} ${uuidv4()}`),
@@ -33,7 +33,7 @@ class ProjectService {
   }
   async updateProjectById(
     projectId: string,
-    updateData: ICreateProjectReqBody
+    updateData: IProjectReqBody
   ): Promise<IResponseMessage<InstanceType<typeof Project>>> {
     const updateProjectData = await Project.findByIdAndUpdate(
       { _id: new ObjectId(projectId) },

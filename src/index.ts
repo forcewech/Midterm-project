@@ -10,6 +10,7 @@ import projectRouter from './routes/project.routes'
 import { PORT } from './config/env-config'
 import userRouter from './routes/user.routes'
 import { client, connectRedis } from './config/connectRedis'
+import typeRouter from './routes/type.routes'
 
 const app = express()
 //Midlleware app
@@ -29,6 +30,7 @@ connectRedis()
 app.use('/v1/auth', authRouter)
 app.use('/v1/projects', projectRouter)
 app.use('/v1/users', userRouter)
+app.use('/v1/types', typeRouter)
 //Handle error
 app.use(customErrorHandler)
 app.listen(PORT, () => {

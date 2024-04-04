@@ -11,7 +11,7 @@ export const projectMessages = {
   END_DATE_REQUIRED: 'End date is required',
   NAME_PROJECT_ALREADY_EXISTS: 'Name project already exists',
   UPDATE_PROJECT_SUCCESS: 'Update project success',
-  PROJECT_ID_NOT_FOUND: 'Project ID not found',
+  PROJECT_ID_NOT_FOUND: 'Project id not found',
   DELETE_PROJECT_SUCCESS: 'Delete project success',
   PROJECT_ID_IS_INVALID: 'Project id is invalid',
   PROJECT_SLUG_NOT_FOUND: 'Project slug not found',
