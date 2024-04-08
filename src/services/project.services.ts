@@ -6,6 +6,7 @@ import { IResponseMessage } from '~/interfaces/reponses/response'
 import { IProjectReqBody } from '~/interfaces/requests/Project.requests'
 import Project from '~/models/schemas/Project.schemas'
 import { v4 as uuidv4 } from 'uuid'
+import User from '~/models/schemas/User.schemas'
 
 class ProjectService {
   async createProject(payload: IProjectReqBody): Promise<IResponseMessage<InstanceType<typeof Project>>> {
@@ -61,19 +62,163 @@ class ProjectService {
     }
   }
   async getProjectById(projectId: string): Promise<IResponseMessage<InstanceType<typeof Project>>> {
-    const getData = await Project.findById({ _id: new ObjectId(projectId) })
+    const getData = await Project.aggregate([
+      {
+        $match: {
+          _id: new ObjectId(projectId)
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'participants',
+          foreignField: '_id',
+          as: 'participants'
+        }
+      },
+      {
+        $lookup: {
+          from: 'tasks',
+          localField: 'tasks',
+          foreignField: '_id',
+          as: 'tasks'
+        }
+      },
+      {
+        $unset: 'participants.password'
+      },
+      {
+        $unwind: {
+          path: '$tasks',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $lookup: {
+          from: 'status',
+          localField: 'tasks.status',
+          foreignField: '_id',
+          as: 'tasks.status'
+        }
+      },
+      {
+        $set: {
+          'tasks.status': {
+            $arrayElemAt: ['$tasks.status', 0]
+          }
+        }
+      },
+      {
+        $group: {
+          _id: '$_id',
+          participants: {
+            $first: '$participants'
+          },
+          slug: { $first: '$slug' },
+          createdAt: { $first: '$createdAt' },
+          startDate: { $first: '$startDate' },
+          endDate: { $first: '$endDate' },
+          name: { $first: '$name' },
+          tasks: {
+            $push: '$tasks'
+          }
+        }
+      }
+    ])
     return {
       success: true,
       code: HTTP_STATUS.OK,
       message: projectMessages.GET_PROJECT_SUCCESS,
-      data: getData as InstanceType<typeof Project>
+      data: getData[0] as InstanceType<typeof Project>
     }
   }
   async getAllProject(page: number, pageSize: number): Promise<IResponseMessage<InstanceType<typeof Project>[]>> {
     const totalItems = await Project.countDocuments({})
     const totalPage = Math.ceil(totalItems / pageSize)
     const skip = (page - 1) * pageSize
-    const getAllDataWithPaginate = await Project.find({}).skip(skip).limit(pageSize)
+    const data = await Project.aggregate([
+      {
+        $lookup: {
+          from: 'tasks',
+          localField: 'tasks',
+          foreignField: '_id',
+          as: 'tasks'
+        }
+      },
+      {
+        $unwind: {
+          path: '$tasks',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $lookup: {
+          from: 'status',
+          localField: 'tasks.status',
+          foreignField: '_id',
+          as: 'tasks.status'
+        }
+      },
+      {
+        $unwind: {
+          path: '$tasks.status',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $addFields: {
+          isClosed: {
+            $cond: {
+              if: {
+                $eq: ['$tasks.status.name', 'Closed']
+              },
+              then: true,
+              else: false
+            }
+          }
+        }
+      },
+      {
+        $addFields: {
+          isNull: {
+            $cond: {
+              if: {
+                $eq: [{ $size: { $objectToArray: '$tasks' } }, 0]
+              },
+              then: true,
+              else: false
+            }
+          }
+        }
+      },
+      {
+        $group: {
+          _id: '$name',
+          totalTasks: { $sum: { $cond: { if: '$isNull', then: 0, else: 1 } } },
+          totalClosedTasks: { $sum: { $cond: { if: '$isClosed', then: 1, else: 0 } } }
+        }
+      },
+      {
+        $project: {
+          name: '$_id',
+          _id: 0,
+          totalTasks: 1,
+          totalClosedTasks: 1
+        }
+      },
+      {
+        $skip: skip
+      },
+      {
+        $limit: pageSize
+      }
+    ])
+    const getAllDataWithPaginate = data.map((item) => {
+      return {
+        ...item,
+        process: `${item.totalClosedTasks}/${item.totalTasks}`
+      }
+    })
     return {
       success: true,
       code: HTTP_STATUS.OK,
@@ -104,6 +249,7 @@ class ProjectService {
     }
     project.participants.push(participant)
     project.save()
+    await User.findByIdAndUpdate({ _id: participant }, { $push: { projects: new ObjectId(projectId) } }, { new: true })
     return {
       success: true,
       code: HTTP_STATUS.OK,
@@ -132,6 +278,7 @@ class ProjectService {
       return item.toString() !== participant.toString()
     })
     await project.save()
+    await User.updateOne({ _id: participant }, { $pull: { projects: new ObjectId(projectId) } })
     return {
       success: true,
       code: HTTP_STATUS.OK,

@@ -1,12 +1,13 @@
 import { createClient } from 'redis'
+import { REDIS_HOST, REDIS_PASSWORD, REDIS_PORT } from './env-config'
 
 export const client = createClient({
-  password: 'hvs2GvCEZHKKP7daZMsBtz09WEwKainm',
+  password: REDIS_PASSWORD,
   socket: {
-    host: 'redis-16228.c299.asia-northeast1-1.gce.cloud.redislabs.com',
-    port: 16228
+    host: REDIS_HOST,
+    port: Number(REDIS_PORT)
   }
 })
-export const connectRedis = async () => {
+export const connectRedis = async (): Promise<void> => {
   await client.connect()
 }

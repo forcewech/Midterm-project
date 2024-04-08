@@ -5,10 +5,6 @@ const taskSchema = new Schema({
     type: String,
     required: true
   },
-  description: {
-    type: String,
-    required: true
-  },
   startDate: {
     type: Date,
     required: true
@@ -26,9 +22,17 @@ const taskSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   },
+  project: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Project'
+  },
   type: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Type'
+  },
+  priority: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Priority'
   },
   createdAt: {
     type: Date,

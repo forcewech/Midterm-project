@@ -35,7 +35,17 @@ class UserService {
     const totalItems = await User.countDocuments({})
     const totalPage = Math.ceil(totalItems / pageSize)
     const skip = (page - 1) * pageSize
-    const getAllDataWithPaginate = await User.find({}).skip(skip).limit(pageSize)
+    const getAllDataWithPaginate = await User.aggregate([
+      {
+        $unset: ['password']
+      },
+      {
+        $skip: skip
+      },
+      {
+        $limit: pageSize
+      }
+    ])
     return {
       success: true,
       code: HTTP_STATUS.OK,
@@ -51,12 +61,21 @@ class UserService {
     return Boolean(projectId)
   }
   async getUserById(userId: string): Promise<IResponseMessage<InstanceType<typeof User>>> {
-    const getData = await User.findById({ _id: new ObjectId(userId) })
+    const getData = await User.aggregate([
+      {
+        $match: {
+          _id: new ObjectId(userId)
+        }
+      },
+      {
+        $unset: ['password']
+      }
+    ])
     return {
       success: true,
       code: HTTP_STATUS.OK,
       message: userMessages.GET_USER_SUCCESS,
-      data: getData as InstanceType<typeof User>
+      data: getData[0] as InstanceType<typeof User>
     }
   }
   async deleteUserById(userId: string): Promise<IResponseMessage<InstanceType<typeof User>>> {

@@ -16,8 +16,8 @@ export const createTypeValidator = validate(
         },
         custom: {
           options: async (value) => {
-            const isExistProject = await typeService.checkTypeExist(value)
-            if (isExistProject) {
+            const isExistType = await typeService.checkTypeExist(value)
+            if (isExistType) {
               throw new Error(typeMessages.NAME_TYPE_ALREADY_EXISTS)
             }
             return true
@@ -45,9 +45,11 @@ export const updateTypeValidator = validate(
         },
         custom: {
           options: async (value) => {
-            const isExistProject = await typeService.checkTypeExist(value)
-            if (isExistProject) {
-              throw new Error(typeMessages.NAME_TYPE_ALREADY_EXISTS)
+            if (value) {
+              const isExistType = await typeService.checkTypeExist(value)
+              if (isExistType) {
+                throw new Error(typeMessages.NAME_TYPE_ALREADY_EXISTS)
+              }
             }
             return true
           }
@@ -65,7 +67,7 @@ export const updateTypeValidator = validate(
 export const checkTypeIdValidator = validate(
   checkSchema(
     {
-      projectId: {
+      typeId: {
         custom: {
           options: async (value) => {
             if (!ObjectId.isValid(value)) {
@@ -73,7 +75,7 @@ export const checkTypeIdValidator = validate(
             }
             const isIdType = await typeService.checkIdTypeExist(value)
             if (!isIdType) {
-              throw new Error(typeMessages.TYPE_ID_NOT_FOUND)
+              throw new Error(typeMessages.TYPE_NOT_FOUND)
             }
             return true
           }

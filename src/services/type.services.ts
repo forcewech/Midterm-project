@@ -22,7 +22,7 @@ class TypeService {
     const updateType = await Type.findByIdAndUpdate({ _id: new ObjectId(typeId) }, { ...payload }, { new: true })
     return {
       success: true,
-      code: HTTP_STATUS.CREATED,
+      code: HTTP_STATUS.OK,
       message: typeMessages.UPDATE_TYPE_SUCCESS,
       data: updateType as InstanceType<typeof Type>
     }

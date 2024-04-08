@@ -9,3 +9,6 @@ export const ACCESS_TOKEN_EXPIRES_IN: string = process.env.ACCESS_TOKEN_EXPIRES_
 export const REFRESH_TOKEN_EXPIRES_IN: string = process.env.REFRESH_TOKEN_EXPIRES_IN as string
 export const INVITE_SECRET_KEY: string = process.env.INVITE_SECRET_KEY as string
 export const INVITE_TOKEN_EXPIRES_IN: string = process.env.INVITE_TOKEN_EXPIRES_IN as string
+export const REDIS_PASSWORD: string = process.env.REDIS_PASSWORD as string
+export const REDIS_HOST: string = process.env.REDIS_HOST as string
+export const REDIS_PORT: string = process.env.REDIS_PORT as string

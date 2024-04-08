@@ -5,7 +5,7 @@ export const userMessages = {
   PAGE_IS_INVALID: 'Page is invalid',
   LIMIT_IS_INVALID: 'Limit is invalid',
   USER_ID_IS_INVALID: 'User id is invalid',
-  USER_ID_NOT_FOUND: 'User id not found',
+  USER_NOT_FOUND: 'User not found',
   GET_USER_SUCCESS: 'Get user success',
   DELETE_USER_SUCCESS: 'Delete user success',
   UPDATE_USER_SUCCESS: 'Update user success',
@@ -14,5 +14,9 @@ export const userMessages = {
   EMAIL_IS_INVALID: 'Email is invalid',
   USERNAME_ALREADY_EXISTS: 'Username already exists',
   STATUS_IS_INVALID: 'Status is invalid',
-  DATE_OF_BIRTH_MUST_BE_ISO8601: 'Date of birth must be ISO8601'
+  DATE_OF_BIRTH_MUST_BE_ISO8601: 'Date of birth must be ISO8601',
+  NAME_IS_REQUIRED: 'Name is required',
+  EMAIL_IS_REQUIRED: 'Email is required',
+  DATE_OF_BIRTH_IS_REQUIRED: 'Date of birth is required',
+  STATUS_IS_REQUIRED: 'Status is required'
 }

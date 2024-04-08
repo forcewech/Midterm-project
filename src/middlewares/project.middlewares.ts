@@ -60,14 +60,13 @@ export const createProjectValidator = validate(
 export const updateProjectValidator = validate(
   checkSchema({
     name: {
-      isString: {
-        errorMessage: projectMessages.NAME_MUST_BE_A_STRING
-      },
       custom: {
         options: async (value) => {
-          const isExistProject = await projectService.checkProjectExist(value)
-          if (isExistProject) {
-            throw new Error(projectMessages.NAME_PROJECT_ALREADY_EXISTS)
+          if (value) {
+            const isExistProject = await projectService.checkProjectExist(value)
+            if (isExistProject) {
+              throw new Error(projectMessages.NAME_PROJECT_ALREADY_EXISTS)
+            }
           }
           return true
         }
@@ -105,7 +104,7 @@ export const checkProjectIdValidator = validate(
             }
             const isIdProject = await projectService.checkIdProjectExist(value)
             if (!isIdProject) {
-              throw new Error(projectMessages.PROJECT_ID_NOT_FOUND)
+              throw new Error(projectMessages.PROJECT_NOT_FOUND)
             }
             return true
           }
@@ -121,9 +120,11 @@ export const getAllProjectValidator = validate(
       page: {
         custom: {
           options: async (value) => {
-            const regex = /(\d*)/
-            if (!regex.test(value)) {
-              throw new Error(projectMessages.PAGE_IS_INVALID)
+            if (value) {
+              const regex = /^\d+$/
+              if (!regex.test(value)) {
+                throw new Error(projectMessages.PAGE_IS_INVALID)
+              }
             }
             return true
           }
@@ -132,9 +133,11 @@ export const getAllProjectValidator = validate(
       limit: {
         custom: {
           options: async (value) => {
-            const regex = /(\d*)/
-            if (!regex.test(value)) {
-              throw new Error(projectMessages.LIMIT_IS_INVALID)
+            if (value) {
+              const regex = /^\d+$/
+              if (!regex.test(value)) {
+                throw new Error(projectMessages.LIMIT_IS_INVALID)
+              }
             }
             return true
           }
@@ -155,7 +158,7 @@ export const checkParticipantValidator = validate(
             }
             const isIdProject = await projectService.checkIdProjectExist(value)
             if (!isIdProject) {
-              throw new Error(projectMessages.PROJECT_ID_NOT_FOUND)
+              throw new Error(projectMessages.PROJECT_NOT_FOUND)
             }
             return true
           }

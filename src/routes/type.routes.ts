@@ -5,8 +5,8 @@ import { checkTypeIdValidator, createTypeValidator, updateTypeValidator } from '
 const typeRouter = Router()
 
 typeRouter.post('/', accessTokenValidator, checkAuthValidator, createTypeValidator, typeController.create)
-typeRouter.get('/', accessTokenValidator, checkAuthValidator, updateTypeValidator, typeController.getAllType)
-typeRouter.put('/:typeId', accessTokenValidator, checkAuthValidator, checkTypeIdValidator, typeController.update)
+typeRouter.get('/', accessTokenValidator, checkAuthValidator, typeController.getAllType)
+typeRouter.put('/:typeId', accessTokenValidator, checkAuthValidator, updateTypeValidator, typeController.update)
 typeRouter.put(
   '/:typeId/hide',
   accessTokenValidator,

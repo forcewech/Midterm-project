@@ -10,9 +10,11 @@ export const getAllUserValidator = validate(
       page: {
         custom: {
           options: async (value) => {
-            const regex = /(\d*)/
-            if (!regex.test(value)) {
-              throw new Error(userMessages.PAGE_IS_INVALID)
+            if (value) {
+              const regex = /^\d+$/
+              if (!regex.test(value)) {
+                throw new Error(userMessages.PAGE_IS_INVALID)
+              }
             }
             return true
           }
@@ -21,9 +23,11 @@ export const getAllUserValidator = validate(
       limit: {
         custom: {
           options: async (value) => {
-            const regex = /(\d*)/
-            if (!regex.test(value)) {
-              throw new Error(userMessages.LIMIT_IS_INVALID)
+            if (value) {
+              const regex = /^\d+$/
+              if (!regex.test(value)) {
+                throw new Error(userMessages.LIMIT_IS_INVALID)
+              }
             }
             return true
           }
@@ -44,7 +48,7 @@ export const checkUserIdValidator = validate(
             }
             const isIdUser = await userService.checkIdUserExist(value)
             if (!isIdUser) {
-              throw new Error(userMessages.USER_ID_NOT_FOUND)
+              throw new Error(userMessages.USER_NOT_FOUND)
             }
             return true
           }
@@ -87,8 +91,10 @@ export const updateUserValidator = validate(
       status: {
         custom: {
           options: async (value) => {
-            if (value !== 'active' && value !== 'inactive') {
-              throw new Error(userMessages.STATUS_IS_INVALID)
+            if (value) {
+              if (value !== 'active' && value !== 'inactive') {
+                throw new Error(userMessages.STATUS_IS_INVALID)
+              }
             }
             return true
           }

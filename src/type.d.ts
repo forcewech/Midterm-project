@@ -8,5 +8,7 @@ declare module 'express' {
     decodedAuthorization?: ITokenPayload
     decodedRefreshToken?: ITokenPayload
     decodedTokenInvite?: ITokenPayload
+    startDateProject?: Date
+    endDateProject?: Date
   }
 }
