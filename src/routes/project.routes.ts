@@ -2,11 +2,14 @@ import { Router } from 'express'
 import projectController from '~/controllers/project.controllers'
 import { accessTokenValidator, checkAuthValidator } from '~/middlewares/auth.middlewares'
 import {
+  checkDateValidator,
+  checkExistParticipant,
+  checkExistParticipantToDelete,
+  checkParticipantValidator,
+  checkProjectIdValidator,
   createProjectValidator,
   getAllProjectValidator,
-  checkProjectIdValidator,
-  updateProjectValidator,
-  checkDateValidator
+  updateProjectValidator
 } from '~/middlewares/project.middlewares'
 const projectRouter = Router()
 
@@ -52,13 +55,16 @@ projectRouter.patch(
   '/:projectId/participants/:participantId',
   accessTokenValidator,
   checkAuthValidator,
-  checkProjectIdValidator,
+  checkParticipantValidator,
+  checkExistParticipant,
   projectController.addParticipant
 )
 projectRouter.delete(
   '/:projectId/participants/:participantId',
   accessTokenValidator,
   checkAuthValidator,
+  checkParticipantValidator,
+  checkExistParticipantToDelete,
   projectController.deleteParticipant
 )
 export default projectRouter

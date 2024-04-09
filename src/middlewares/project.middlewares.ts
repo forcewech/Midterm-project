@@ -1,12 +1,15 @@
+import { NextFunction, Request, RequestHandler, Response } from 'express'
+import { ParamsDictionary } from 'express-serve-static-core'
 import { checkSchema } from 'express-validator'
 import { ObjectId } from 'mongodb'
-import { projectMessages } from '~/constants/messages/project.messages'
-import projectService from '~/services/project.services'
-import { ParamsDictionary } from 'express-serve-static-core'
-import { validate } from '~/utils/validation'
-import { NextFunction, Request, RequestHandler, Response } from 'express'
-import { IProjectReqBody } from '~/interfaces/requests/Project.requests'
 import HTTP_STATUS from '~/constants/httpStatus'
+import { projectMessages } from '~/constants/messages/project.messages'
+import { userMessages } from '~/constants/messages/user.messages'
+import { IProjectReqBody } from '~/interfaces/requests/Project.requests'
+import Project from '~/models/schemas/Project.schemas'
+import projectService from '~/services/project.services'
+import userService from '~/services/user.services'
+import { validate } from '~/utils/validation'
 
 export const createProjectValidator = validate(
   checkSchema(
@@ -170,6 +173,10 @@ export const checkParticipantValidator = validate(
             if (!ObjectId.isValid(value)) {
               throw new Error(projectMessages.PARTICIPANT_ID_IS_INVALID)
             }
+            const isIdParticipant = await userService.checkIdUserExist(value)
+            if (!isIdParticipant) {
+              throw new Error(userMessages.USER_NOT_FOUND)
+            }
             return true
           }
         }
@@ -190,6 +197,64 @@ export const checkDateValidator: RequestHandler = (
         success: false,
         code: HTTP_STATUS.UNPROCESSABLE_ETITY,
         message: projectMessages.START_DATE_CANNOT_BE_AFTER_END_DATE
+      })
+    }
+    next()
+  } catch (error) {
+    const err: Error = error as Error
+    throw new Error(err.message)
+  }
+}
+
+export const checkExistParticipant: RequestHandler = async (
+  req: Request<ParamsDictionary, any, IProjectReqBody>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const projectId = req.params.projectId
+    const participant = req.params.participantId
+    const project = (await Project.findById({ _id: new ObjectId(projectId) })) as InstanceType<typeof Project>
+    let isParticipantExists = false
+    project.participants.forEach((item) => {
+      if (item.toString() === participant.toString()) {
+        isParticipantExists = true
+      }
+    })
+    if (isParticipantExists) {
+      return res.status(HTTP_STATUS.UNPROCESSABLE_ETITY).json({
+        success: false,
+        code: HTTP_STATUS.CONFLICT,
+        message: projectMessages.PARTICIPANT_ALREADY_EXISTS
+      })
+    }
+    next()
+  } catch (error) {
+    const err: Error = error as Error
+    throw new Error(err.message)
+  }
+}
+
+export const checkExistParticipantToDelete: RequestHandler = async (
+  req: Request<ParamsDictionary, any, IProjectReqBody>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const projectId = req.params.projectId
+    const participant = req.params.participantId
+    const project = (await Project.findById({ _id: new ObjectId(projectId) })) as InstanceType<typeof Project>
+    let isParticipantExists = false
+    project.participants.forEach((item) => {
+      if (item.toString() === participant.toString()) {
+        isParticipantExists = true
+      }
+    })
+    if (!isParticipantExists) {
+      return res.status(HTTP_STATUS.UNPROCESSABLE_ETITY).json({
+        success: false,
+        code: HTTP_STATUS.UNPROCESSABLE_ETITY,
+        message: projectMessages.PARTICIPANT_NOT_EXIST
       })
     }
     next()

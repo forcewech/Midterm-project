@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import HTTP_STATUS from '~/constants/httpStatus'
+import { statusMessages } from '~/constants/messages/status.messages'
 import { IResponseMessage } from '~/interfaces/reponses/response'
 import { IStatusReqBody } from '~/interfaces/requests/Status.requests'
 import Status from '~/models/schemas/Status.schemas'
@@ -12,8 +13,13 @@ class StatusController {
     res: Response
   ): Promise<Response<IResponseMessage<typeof Status>>> {
     try {
-      const result = await statusService.createStatus(req.body)
-      return res.status(HTTP_STATUS.CREATED).json(result)
+      const data = await statusService.createStatus(req.body)
+      return res.status(HTTP_STATUS.CREATED).json({
+        success: true,
+        code: HTTP_STATUS.CREATED,
+        message: statusMessages.CREATE_STATUS_SUCCESS,
+        data
+      })
     } catch (error) {
       const err: Error = error as Error
       throw new Error(err.message)
@@ -25,8 +31,13 @@ class StatusController {
   ): Promise<Response<IResponseMessage<typeof Status>>> {
     try {
       const statusId = req.params.statusId
-      const result = await statusService.updateStatus(req.body, statusId)
-      return res.json(result)
+      const data = await statusService.updateStatus(req.body, statusId)
+      return res.json({
+        success: true,
+        code: HTTP_STATUS.OK,
+        message: statusMessages.UPDATE_STATUS_SUCCESS,
+        data
+      })
     } catch (error) {
       const err: Error = error as Error
       throw new Error(err.message)
@@ -34,8 +45,13 @@ class StatusController {
   }
   async getAllStatus(req: Request, res: Response): Promise<Response<IResponseMessage<typeof Status>[]>> {
     try {
-      const result = await statusService.getAllStatus()
-      return res.json(result)
+      const data = await statusService.getAllStatus()
+      return res.json({
+        success: true,
+        code: HTTP_STATUS.OK,
+        message: statusMessages.GET_ALL_STATUS_SUCCESS,
+        data
+      })
     } catch (error) {
       const err: Error = error as Error
       throw new Error(err.message)
@@ -47,8 +63,12 @@ class StatusController {
   ): Promise<Response<IResponseMessage<typeof Status>>> {
     try {
       const statusId = req.params.statusId
-      const result = await statusService.hiddenStatus(statusId)
-      return res.json(result)
+      await statusService.hiddenStatus(statusId)
+      return res.json({
+        success: true,
+        code: HTTP_STATUS.OK,
+        message: statusMessages.STATUS_HIDDEN_SUCCESS
+      })
     } catch (error) {
       const err: Error = error as Error
       throw new Error(err.message)

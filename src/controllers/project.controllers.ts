@@ -1,8 +1,9 @@
 import { Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { ObjectId } from 'mongodb'
-import { defaultLimit, defaultPage } from '~/constants/constant'
+import { DEFAULT_LIMIT, DEFAULT_PAGE } from '~/constants/constant'
 import HTTP_STATUS from '~/constants/httpStatus'
+import { projectMessages } from '~/constants/messages/project.messages'
 import { IResponseMessage } from '~/interfaces/reponses/response'
 import { IProjectReqBody } from '~/interfaces/requests/Project.requests'
 import Project from '~/models/schemas/Project.schemas'
@@ -14,8 +15,13 @@ class ProjectController {
     res: Response
   ): Promise<Response<IResponseMessage<typeof Project>>> {
     try {
-      const result = await projectService.createProject(req.body)
-      return res.status(HTTP_STATUS.CREATED).json(result)
+      const data = await projectService.createProject(req.body)
+      return res.status(HTTP_STATUS.CREATED).json({
+        success: true,
+        code: HTTP_STATUS.CREATED,
+        message: projectMessages.CREATE_PROJECT_SUCCESS,
+        data
+      })
     } catch (error) {
       const err: Error = error as Error
       throw new Error(err.message)
@@ -27,8 +33,13 @@ class ProjectController {
   ): Promise<Response<IResponseMessage<typeof Project>>> {
     try {
       const projectId = req.params.projectId
-      const result = await projectService.updateProjectById(projectId, req.body)
-      return res.json(result)
+      const data = await projectService.updateProjectById(projectId, req.body)
+      return res.json({
+        success: true,
+        code: HTTP_STATUS.OK,
+        message: projectMessages.UPDATE_PROJECT_SUCCESS,
+        data
+      })
     } catch (error) {
       const err: Error = error as Error
       throw new Error(err.message)
@@ -37,8 +48,12 @@ class ProjectController {
   async delete(req: Request, res: Response): Promise<Response<IResponseMessage<typeof Project>>> {
     try {
       const projectId = req.params.projectId
-      const result = await projectService.deleteProjectById(projectId)
-      return res.json(result)
+      await projectService.deleteProjectById(projectId)
+      return res.json({
+        success: true,
+        code: HTTP_STATUS.OK,
+        message: projectMessages.DELETE_PROJECT_SUCCESS
+      })
     } catch (error) {
       const err: Error = error as Error
       throw new Error(err.message)
@@ -47,8 +62,13 @@ class ProjectController {
   async getProject(req: Request, res: Response): Promise<Response<IResponseMessage<typeof Project>>> {
     try {
       const projectId = req.params.projectId
-      const result = await projectService.getProjectById(projectId)
-      return res.json(result)
+      const data = await projectService.getProjectById(projectId)
+      return res.json({
+        success: true,
+        code: HTTP_STATUS.OK,
+        message: projectMessages.GET_PROJECT_SUCCESS,
+        data
+      })
     } catch (error) {
       const err: Error = error as Error
       throw new Error(err.message)
@@ -56,10 +76,15 @@ class ProjectController {
   }
   async getAllProject(req: Request, res: Response): Promise<Response<IResponseMessage<typeof Project>[]>> {
     try {
-      const page = parseInt(req.query.page as string) || defaultPage
-      const pageSize = parseInt(req.query.limit as string) || defaultLimit
-      const result = await projectService.getAllProject(page, pageSize)
-      return res.json(result)
+      const page = parseInt(req.query.page as string) || DEFAULT_PAGE
+      const pageSize = parseInt(req.query.limit as string) || DEFAULT_LIMIT
+      const data = await projectService.getAllProject(page, pageSize)
+      return res.json({
+        success: true,
+        code: HTTP_STATUS.OK,
+        message: projectMessages.GET_ALL_PROJECT_WITH_PAGINATE_SUCCESS,
+        data
+      })
     } catch (error) {
       const err: Error = error as Error
       throw new Error(err.message)
@@ -69,11 +94,12 @@ class ProjectController {
     try {
       const projectId = req.params.projectId
       const participant = req.params.participantId
-      const result = await projectService.addParticipant(projectId, new ObjectId(participant))
-      if (!result.success) {
-        return res.status(HTTP_STATUS.CONFLICT).json(result)
-      }
-      return res.json(result)
+      await projectService.addParticipant(projectId, new ObjectId(participant))
+      return res.json({
+        success: true,
+        code: HTTP_STATUS.OK,
+        message: projectMessages.ADD_PARTICIPANT_SUCCESS
+      })
     } catch (error) {
       const err: Error = error as Error
       throw new Error(err.message)
@@ -83,11 +109,12 @@ class ProjectController {
     try {
       const projectId = req.params.projectId
       const participant = req.params.participantId
-      const result = await projectService.deleteParticipant(projectId, new ObjectId(participant))
-      if (!result.success) {
-        return res.status(HTTP_STATUS.NOT_FOUND).json(result)
-      }
-      return res.json(result)
+      await projectService.deleteParticipant(projectId, new ObjectId(participant))
+      return res.json({
+        success: true,
+        code: HTTP_STATUS.OK,
+        message: projectMessages.DELETE_PARTICIPANT_SUCCESS
+      })
     } catch (error) {
       const err: Error = error as Error
       throw new Error(err.message)

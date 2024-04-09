@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import HTTP_STATUS from '~/constants/httpStatus'
+import { priorityMessages } from '~/constants/messages/priority.messages'
 import { IResponseMessage } from '~/interfaces/reponses/response'
 import { IPriorityReqBody } from '~/interfaces/requests/Priority.requests'
 import Priority from '~/models/schemas/Priority.schemas'
@@ -12,8 +13,13 @@ class PriorityController {
     res: Response
   ): Promise<Response<IResponseMessage<typeof Priority>>> {
     try {
-      const result = await priorityService.createPriority(req.body)
-      return res.status(HTTP_STATUS.CREATED).json(result)
+      const data = await priorityService.createPriority(req.body)
+      return res.status(HTTP_STATUS.CREATED).json({
+        success: true,
+        code: HTTP_STATUS.CREATED,
+        message: priorityMessages.CREATE_PRIORITY_SUCCESS,
+        data
+      })
     } catch (error) {
       const err: Error = error as Error
       throw new Error(err.message)
@@ -25,8 +31,13 @@ class PriorityController {
   ): Promise<Response<IResponseMessage<typeof Priority>>> {
     try {
       const priorityId = req.params.priorityId
-      const result = await priorityService.updatePriority(req.body, priorityId)
-      return res.json(result)
+      const data = await priorityService.updatePriority(req.body, priorityId)
+      return res.json({
+        success: true,
+        code: HTTP_STATUS.OK,
+        message: priorityMessages.UPDATE_PRIORITY_SUCCESS,
+        data
+      })
     } catch (error) {
       const err: Error = error as Error
       throw new Error(err.message)
@@ -34,8 +45,13 @@ class PriorityController {
   }
   async getAllPriority(req: Request, res: Response): Promise<Response<IResponseMessage<typeof Priority>[]>> {
     try {
-      const result = await priorityService.getAllPriority()
-      return res.json(result)
+      const data = await priorityService.getAllPriority()
+      return res.json({
+        success: true,
+        code: HTTP_STATUS.OK,
+        message: priorityMessages.GET_ALL_PRIORITY_SUCCESS,
+        data
+      })
     } catch (error) {
       const err: Error = error as Error
       throw new Error(err.message)
@@ -44,11 +60,15 @@ class PriorityController {
   async hiddenPriority(
     req: Request<ParamsDictionary, any, IPriorityReqBody>,
     res: Response
-  ): Promise<Response<IResponseMessage<typeof Priority>>> {
+  ): Promise<Response<IResponseMessage<null>>> {
     try {
       const priorityId = req.params.priorityId
-      const result = await priorityService.hiddenPriority(priorityId)
-      return res.json(result)
+      await priorityService.hiddenPriority(priorityId)
+      return res.json({
+        success: true,
+        code: HTTP_STATUS.OK,
+        message: priorityMessages.PRIORITY_HIDDEN_SUCCESS
+      })
     } catch (error) {
       const err: Error = error as Error
       throw new Error(err.message)
