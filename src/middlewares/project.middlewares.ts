@@ -2,7 +2,11 @@ import { checkSchema } from 'express-validator'
 import { ObjectId } from 'mongodb'
 import { projectMessages } from '~/constants/messages/project.messages'
 import projectService from '~/services/project.services'
+import { ParamsDictionary } from 'express-serve-static-core'
 import { validate } from '~/utils/validation'
+import { NextFunction, Request, RequestHandler, Response } from 'express'
+import { IProjectReqBody } from '~/interfaces/requests/Project.requests'
+import HTTP_STATUS from '~/constants/httpStatus'
 
 export const createProjectValidator = validate(
   checkSchema(
@@ -56,14 +60,13 @@ export const createProjectValidator = validate(
 export const updateProjectValidator = validate(
   checkSchema({
     name: {
-      isString: {
-        errorMessage: projectMessages.NAME_MUST_BE_A_STRING
-      },
       custom: {
         options: async (value) => {
-          const isExistProject = await projectService.checkProjectExist(value)
-          if (isExistProject) {
-            throw new Error(projectMessages.NAME_PROJECT_ALREADY_EXISTS)
+          if (value) {
+            const isExistProject = await projectService.checkProjectExist(value)
+            if (isExistProject) {
+              throw new Error(projectMessages.NAME_PROJECT_ALREADY_EXISTS)
+            }
           }
           return true
         }
@@ -86,24 +89,11 @@ export const updateProjectValidator = validate(
         },
         errorMessage: projectMessages.END_DATE_MUST_BE_ISO8601
       }
-    },
-    projectId: {
-      custom: {
-        options: async (value) => {
-          if (!ObjectId.isValid(value)) {
-            throw new Error(projectMessages.PROJECT_ID_IS_INVALID)
-          }
-          const isIdProject = await projectService.checkIdProjectExist(value)
-          if (!isIdProject) {
-            throw new Error(projectMessages.PROJECT_ID_NOT_FOUND)
-          }
-          return true
-        }
-      }
     }
   })
 )
-export const deleteProjectValidator = validate(
+
+export const checkProjectIdValidator = validate(
   checkSchema(
     {
       projectId: {
@@ -114,7 +104,7 @@ export const deleteProjectValidator = validate(
             }
             const isIdProject = await projectService.checkIdProjectExist(value)
             if (!isIdProject) {
-              throw new Error(projectMessages.PROJECT_ID_NOT_FOUND)
+              throw new Error(projectMessages.PROJECT_NOT_FOUND)
             }
             return true
           }
@@ -124,7 +114,40 @@ export const deleteProjectValidator = validate(
     ['params']
   )
 )
-export const getProjectValidator = validate(
+export const getAllProjectValidator = validate(
+  checkSchema(
+    {
+      page: {
+        custom: {
+          options: async (value) => {
+            if (value) {
+              const regex = /^\d+$/
+              if (!regex.test(value)) {
+                throw new Error(projectMessages.PAGE_IS_INVALID)
+              }
+            }
+            return true
+          }
+        }
+      },
+      limit: {
+        custom: {
+          options: async (value) => {
+            if (value) {
+              const regex = /^\d+$/
+              if (!regex.test(value)) {
+                throw new Error(projectMessages.LIMIT_IS_INVALID)
+              }
+            }
+            return true
+          }
+        }
+      }
+    },
+    ['query']
+  )
+)
+export const checkParticipantValidator = validate(
   checkSchema(
     {
       projectId: {
@@ -135,7 +158,17 @@ export const getProjectValidator = validate(
             }
             const isIdProject = await projectService.checkIdProjectExist(value)
             if (!isIdProject) {
-              throw new Error(projectMessages.PROJECT_ID_NOT_FOUND)
+              throw new Error(projectMessages.PROJECT_NOT_FOUND)
+            }
+            return true
+          }
+        }
+      },
+      participantId: {
+        custom: {
+          options: async (value) => {
+            if (!ObjectId.isValid(value)) {
+              throw new Error(projectMessages.PARTICIPANT_ID_IS_INVALID)
             }
             return true
           }
@@ -145,3 +178,23 @@ export const getProjectValidator = validate(
     ['params']
   )
 )
+export const checkDateValidator: RequestHandler = (
+  req: Request<ParamsDictionary, any, IProjectReqBody>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const data = req.body
+    if (data.startDate > data.endDate) {
+      return res.status(HTTP_STATUS.UNPROCESSABLE_ETITY).json({
+        success: false,
+        code: HTTP_STATUS.UNPROCESSABLE_ETITY,
+        message: projectMessages.START_DATE_CANNOT_BE_AFTER_END_DATE
+      })
+    }
+    next()
+  } catch (error) {
+    const err: Error = error as Error
+    throw new Error(err.message)
+  }
+}

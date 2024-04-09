@@ -25,5 +25,11 @@ export const authMessages = {
   REFRESH_TOKEN_IS_INVALID: 'Refresh token is invalid',
   USED_REFRESH_TOKEN_OR_NOT_EXIST: 'Used refresh token or not exists',
   LOGOUT_SUCCESS: 'logout success',
-  USER_NOT_FOUND: 'User not found'
+  USER_NOT_FOUND: 'User not found',
+  GET_ACCESS_TOKEN_AND_REFRESH_TOKEN_SUCCESS: 'Get access token and refresh token success',
+  INVITE_ID_NOT_FOUND: 'Invite id not found',
+  INVITE_ID_IS_INACTIVE: 'Invite id is inactive',
+  INVITE_ID_IS_REQUIRED: 'Invite id is required',
+  YOUR_ACCOUNT_IS_CURRENTLY_INACTIVE: 'Your account is currently inactive',
+  FORBIDDEN_ACCESS_DENIED: 'Forbidden Access denied'
 } as const

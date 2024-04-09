@@ -16,12 +16,17 @@ const userSchema = new Schema({
   email: {
     type: String
   },
-  inviteid: {
+  inviteId: {
     type: String
   },
   dateOfBirth: {
     type: Date,
     default: new Date()
+  },
+  role: {
+    type: String,
+    enum: ['user', 'admin'],
+    default: 'user'
   },
   status: {
     type: String,
