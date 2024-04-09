@@ -18,6 +18,8 @@ import { validate } from '~/utils/validation'
 import { ITaskReqBody } from '~/interfaces/requests/Task.requests'
 import Project from '~/models/schemas/Project.schemas'
 import HTTP_STATUS from '~/constants/httpStatus'
+import Status from '~/models/schemas/Status.schemas'
+import { EStatus } from '~/constants/enums'
 
 export const createTaskValidator = validate(
   checkSchema(
@@ -98,7 +100,7 @@ export const createTaskValidator = validate(
       },
       statusId: {
         custom: {
-          options: async (value) => {
+          options: async (value, { req }) => {
             if (value) {
               if (!ObjectId.isValid(value)) {
                 throw new Error(statusMessages.STATUS_ID_IS_INVALID)
@@ -107,6 +109,9 @@ export const createTaskValidator = validate(
               if (!isIdStatus) {
                 throw new Error(statusMessages.STATUS_NOT_FOUND)
               }
+            } else {
+              const defaultNew = await Status.findOne({ name: EStatus.NEW })
+              req.defaultNew = defaultNew ? defaultNew : null
             }
             return true
           }

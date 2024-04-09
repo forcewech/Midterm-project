@@ -8,7 +8,13 @@ export enum EUserRole {
   USER = 'user'
 }
 
-export enum EStatus {
+export enum EUserStatus {
   ACTIVE = 'active',
   INACTIVE = 'inactive'
+}
+
+export enum EStatus {
+  NEW = 'New',
+  IN_PROGRESS = 'In Progress',
+  CLOSED = 'Closed'
 }

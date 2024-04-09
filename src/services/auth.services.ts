@@ -62,7 +62,10 @@ class AuthService {
     await Project.findByIdAndUpdate({ _id: projectId }, { $push: { participants: newUser._id } }, { new: true })
     const [accessToken, refreshToken] = await this.signAccessAndRefreshToken(newUser._id.toString(), newUser.role)
     const key = `user_${accessToken}`
-    await client.set(key, accessToken)
+    const expireTime = parseInt(ACCESS_TOKEN_EXPIRES_IN.slice(0, -1)) * 60
+    client.set(key, accessToken, {
+      EX: expireTime
+    })
     const newRefreshToken = new RefreshToken({ userId: newUser._id, token: refreshToken })
     await newRefreshToken.save()
     await InviteId.findOneAndUpdate({ code: payload.inviteId }, { status: 'inactive' }, { new: true })
@@ -74,7 +77,10 @@ class AuthService {
   async login(userId: string, role: string): Promise<IToken> {
     const [accessToken, refreshToken] = await this.signAccessAndRefreshToken(userId, role)
     const key = `user_${accessToken}`
-    await client.set(key, accessToken)
+    const expireTime = parseInt(ACCESS_TOKEN_EXPIRES_IN.slice(0, -1)) * 60
+    client.set(key, accessToken, {
+      EX: expireTime
+    })
     const newRefreshToken = new RefreshToken({ userId: new ObjectId(userId), token: refreshToken })
     await newRefreshToken.save()
     return {
@@ -89,7 +95,10 @@ class AuthService {
     await RefreshToken.deleteOne({ token: refreshTokenOld })
     const [accessToken, refreshToken] = await this.signAccessAndRefreshToken(userId, role)
     const key = `user_${accessToken}`
-    await client.set(key, accessToken)
+    const expireTime = parseInt(ACCESS_TOKEN_EXPIRES_IN.slice(0, -1)) * 60
+    client.set(key, accessToken, {
+      EX: expireTime
+    })
     const newRefreshToken = new RefreshToken({ userId: new ObjectId(userId), token: refreshToken })
     await newRefreshToken.save()
     return {

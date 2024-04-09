@@ -15,7 +15,8 @@ class TaskController {
   ): Promise<Response<IResponseMessage<typeof Task>>> {
     try {
       const meId = req.decodedAuthorization?.userId as string
-      const data = await taskService.createTask(req.body, meId)
+      const defaultNew = req.defaultNew as string
+      const data = await taskService.createTask(req.body, meId, defaultNew)
       return res.status(HTTP_STATUS.CREATED).json({
         success: true,
         code: HTTP_STATUS.CREATED,

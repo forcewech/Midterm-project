@@ -1,17 +1,16 @@
 import { ObjectId } from 'mongodb'
-import { DEFAULT_NEW } from '~/constants/constant'
 import { IResponseMessage } from '~/interfaces/reponses/response'
 import { ITaskReqBody } from '~/interfaces/requests/Task.requests'
 import Project from '~/models/schemas/Project.schemas'
 import Task from '~/models/schemas/Task.schemas'
 
 class TaskService {
-  async createTask(payload: ITaskReqBody, userId: string): Promise<InstanceType<typeof Task>> {
+  async createTask(payload: ITaskReqBody, userId: string, defaultNew: string): Promise<InstanceType<typeof Task>> {
     const newTask = new Task({
       ...payload,
       project: payload.projectId,
       type: payload.typeId,
-      status: payload.statusId ?? DEFAULT_NEW,
+      status: payload.statusId ?? defaultNew,
       priority: payload.priorityId,
       assignedTo: payload.assignedTo ?? userId
     })
