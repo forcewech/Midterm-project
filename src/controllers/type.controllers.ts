@@ -4,6 +4,7 @@ import { ParamsDictionary } from 'express-serve-static-core'
 import Type from '~/models/schemas/Type.schemas'
 import { IResponseMessage } from '~/interfaces/reponses/response'
 import typeService from '~/services/type.services'
+import HTTP_STATUS from '~/constants/httpStatus'
 
 class TypeController {
   async create(
@@ -12,7 +13,7 @@ class TypeController {
   ): Promise<Response<IResponseMessage<typeof Type>>> {
     try {
       const result = await typeService.createType(req.body)
-      return res.status(201).json(result)
+      return res.status(HTTP_STATUS.CREATED).json(result)
     } catch (error) {
       const err: Error = error as Error
       throw new Error(err.message)

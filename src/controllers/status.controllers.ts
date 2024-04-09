@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
+import HTTP_STATUS from '~/constants/httpStatus'
 import { IResponseMessage } from '~/interfaces/reponses/response'
 import { IStatusReqBody } from '~/interfaces/requests/Status.requests'
 import Status from '~/models/schemas/Status.schemas'
@@ -12,7 +13,7 @@ class StatusController {
   ): Promise<Response<IResponseMessage<typeof Status>>> {
     try {
       const result = await statusService.createStatus(req.body)
-      return res.status(201).json(result)
+      return res.status(HTTP_STATUS.CREATED).json(result)
     } catch (error) {
       const err: Error = error as Error
       throw new Error(err.message)

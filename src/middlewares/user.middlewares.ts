@@ -1,5 +1,6 @@
 import { checkSchema } from 'express-validator'
 import { ObjectId } from 'mongodb'
+import { EStatus } from '~/constants/enums'
 import { userMessages } from '~/constants/messages/user.messages'
 import userService from '~/services/user.services'
 import { validate } from '~/utils/validation'
@@ -92,7 +93,7 @@ export const updateUserValidator = validate(
         custom: {
           options: async (value) => {
             if (value) {
-              if (value !== 'active' && value !== 'inactive') {
+              if (value !== EStatus.ACTIVE && value !== EStatus.INACTIVE) {
                 throw new Error(userMessages.STATUS_IS_INVALID)
               }
             }

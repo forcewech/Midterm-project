@@ -265,7 +265,7 @@ export const checkAuthValidator: RequestHandler = (req: Request, res: Response, 
     const userRole = req.decodedAuthorization?.role
     if (userRole !== EUserRole.ADMIN) {
       return res
-        .status(403)
+        .status(HTTP_STATUS.FORBIDDEN)
         .json({ success: false, code: HTTP_STATUS.FORBIDDEN, message: authMessages.FORBIDDEN_ACCESS_DENIED })
     }
     next()

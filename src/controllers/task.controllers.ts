@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { defaultLimit, defaultPage } from '~/constants/constant'
+import HTTP_STATUS from '~/constants/httpStatus'
 import { IResponseMessage } from '~/interfaces/reponses/response'
 import { ITaskReqBody } from '~/interfaces/requests/Task.requests'
 import Task from '~/models/schemas/Task.schemas'
@@ -14,7 +15,7 @@ class TaskController {
     try {
       const meId = req.decodedAuthorization?.userId as string
       const result = await taskService.createTask(req.body, meId)
-      return res.status(201).json(result)
+      return res.status(HTTP_STATUS.CREATED).json(result)
     } catch (error) {
       const err: Error = error as Error
       throw new Error(err.message)

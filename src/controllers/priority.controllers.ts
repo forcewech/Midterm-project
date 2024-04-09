@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
+import HTTP_STATUS from '~/constants/httpStatus'
 import { IResponseMessage } from '~/interfaces/reponses/response'
 import { IPriorityReqBody } from '~/interfaces/requests/Priority.requests'
 import Priority from '~/models/schemas/Priority.schemas'
@@ -12,7 +13,7 @@ class PriorityController {
   ): Promise<Response<IResponseMessage<typeof Priority>>> {
     try {
       const result = await priorityService.createPriority(req.body)
-      return res.status(201).json(result)
+      return res.status(HTTP_STATUS.CREATED).json(result)
     } catch (error) {
       const err: Error = error as Error
       throw new Error(err.message)

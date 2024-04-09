@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { ObjectId } from 'mongodb'
 import { defaultLimit, defaultPage } from '~/constants/constant'
+import HTTP_STATUS from '~/constants/httpStatus'
 import { IResponseMessage } from '~/interfaces/reponses/response'
 import { IProjectReqBody } from '~/interfaces/requests/Project.requests'
 import Project from '~/models/schemas/Project.schemas'
@@ -14,7 +15,7 @@ class ProjectController {
   ): Promise<Response<IResponseMessage<typeof Project>>> {
     try {
       const result = await projectService.createProject(req.body)
-      return res.status(201).json(result)
+      return res.status(HTTP_STATUS.CREATED).json(result)
     } catch (error) {
       const err: Error = error as Error
       throw new Error(err.message)
@@ -69,8 +70,8 @@ class ProjectController {
       const projectId = req.params.projectId
       const participant = req.params.participantId
       const result = await projectService.addParticipant(projectId, new ObjectId(participant))
-      if (result.success === false) {
-        return res.status(409).json(result)
+      if (!result.success) {
+        return res.status(HTTP_STATUS.CONFLICT).json(result)
       }
       return res.json(result)
     } catch (error) {
@@ -83,8 +84,8 @@ class ProjectController {
       const projectId = req.params.projectId
       const participant = req.params.participantId
       const result = await projectService.deleteParticipant(projectId, new ObjectId(participant))
-      if (result.success === false) {
-        return res.status(404).json(result)
+      if (!result.success) {
+        return res.status(HTTP_STATUS.NOT_FOUND).json(result)
       }
       return res.json(result)
     } catch (error) {

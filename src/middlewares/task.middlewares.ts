@@ -294,7 +294,7 @@ export const dateInProjectValidator: RequestHandler = (
     const startDateProject = req.startDateProject as Date
     const endDateProject = req.endDateProject as Date
     if (data.startDate < startDateProject.toISOString() || data.endDate > endDateProject.toISOString()) {
-      return res.status(422).json({
+      return res.status(HTTP_STATUS.UNPROCESSABLE_ETITY).json({
         success: false,
         code: HTTP_STATUS.UNPROCESSABLE_ETITY,
         message: taskMessages.START_DATE_AND_END_DATE_WITHIN_PROJECT
@@ -377,7 +377,7 @@ export const checkUsersInProject: RequestHandler = async (
       }
     ])
     if (data.length === 0) {
-      return res.status(422).json({
+      return res.status(HTTP_STATUS.UNPROCESSABLE_ETITY).json({
         success: false,
         code: HTTP_STATUS.UNPROCESSABLE_ETITY,
         message: taskMessages.USER_IS_NOT_A_MEMBER_OF_THE_PROJECT

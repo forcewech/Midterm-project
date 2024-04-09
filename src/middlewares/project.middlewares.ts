@@ -186,7 +186,7 @@ export const checkDateValidator: RequestHandler = (
   try {
     const data = req.body
     if (data.startDate > data.endDate) {
-      return res.status(422).json({
+      return res.status(HTTP_STATUS.UNPROCESSABLE_ETITY).json({
         success: false,
         code: HTTP_STATUS.UNPROCESSABLE_ETITY,
         message: projectMessages.START_DATE_CANNOT_BE_AFTER_END_DATE
