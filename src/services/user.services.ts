@@ -1,10 +1,10 @@
 import { ObjectId } from 'mongodb'
 import { INVITE_SECRET_KEY, INVITE_TOKEN_EXPIRES_IN } from '~/config/env-config'
 import { IResponseMessage } from '~/interfaces/reponses/response'
-import { IUpdateUser } from '~/interfaces/requests/User.requests'
-import InviteId from '~/models/schemas/InviteId.schemas'
-import User from '~/models/schemas/User.schemas'
+import { IUpdateUser } from '~/interfaces/requests'
+import { InviteId, User } from '~/models/schemas'
 import { signToken } from '~/utils/jwt'
+
 class UserService {
   private async signInviteId(projectId: string): Promise<string> {
     return signToken({
@@ -79,4 +79,4 @@ class UserService {
   }
 }
 const userService = new UserService()
-export default userService
+export { userService }

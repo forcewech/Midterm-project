@@ -1,8 +1,7 @@
 import { ObjectId } from 'mongodb'
 import { IResponseMessage } from '~/interfaces/reponses/response'
-import { ITaskReqBody } from '~/interfaces/requests/Task.requests'
-import Project from '~/models/schemas/Project.schemas'
-import Task from '~/models/schemas/Task.schemas'
+import { ITaskReqBody } from '~/interfaces/requests'
+import { Project, Task } from '~/models/schemas'
 
 class TaskService {
   async createTask(payload: ITaskReqBody, userId: string, defaultNew: string): Promise<InstanceType<typeof Task>> {
@@ -94,4 +93,4 @@ class TaskService {
   }
 }
 const taskService = new TaskService()
-export default taskService
+export { taskService }

@@ -1,7 +1,6 @@
 import { Router } from 'express'
-import userController from '~/controllers/user.controllers'
-import { accessTokenValidator, checkAuthValidator } from '~/middlewares/auth.middlewares'
-import { checkUserIdValidator } from '~/middlewares/user.middlewares'
+import { userController } from '~/controllers'
+import { accessTokenValidator, checkAuthValidator, checkUserIdValidator } from '~/middlewares'
 const userRouter = Router()
 
 userRouter.post('/inviteId', accessTokenValidator, checkAuthValidator, userController.createInviteId)
@@ -9,4 +8,5 @@ userRouter.get('/', accessTokenValidator, checkAuthValidator, userController.get
 userRouter.get('/:userId', accessTokenValidator, checkAuthValidator, checkUserIdValidator, userController.getUser)
 userRouter.delete('/:userId', accessTokenValidator, checkAuthValidator, checkUserIdValidator, userController.delete)
 userRouter.put('/:userId', accessTokenValidator, checkAuthValidator, checkUserIdValidator, userController.update)
-export default userRouter
+
+export { userRouter }

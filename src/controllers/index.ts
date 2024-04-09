@@ -1,0 +1,7 @@
+export * from './auth.controllers'
+export * from './priority.controllers'
+export * from './project.controllers'
+export * from './status.controllers'
+export * from './task.controllers'
+export * from './type.controllers'
+export * from './user.controllers'

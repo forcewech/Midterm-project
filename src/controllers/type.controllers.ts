@@ -1,11 +1,11 @@
 import { Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import HTTP_STATUS from '~/constants/httpStatus'
-import { typeMessages } from '~/constants/messages/type.messages'
+import { typeMessages } from '~/constants/messages'
 import { IResponseMessage } from '~/interfaces/reponses/response'
-import { ITypeReqBody } from '~/interfaces/requests/Type.requests'
-import Type from '~/models/schemas/Type.schemas'
-import typeService from '~/services/type.services'
+import { ITypeReqBody } from '~/interfaces/requests'
+import { Type } from '~/models/schemas'
+import { typeService } from '~/services'
 
 class TypeController {
   async create(
@@ -77,4 +77,4 @@ class TypeController {
 }
 
 const typeController = new TypeController()
-export default typeController
+export { typeController }

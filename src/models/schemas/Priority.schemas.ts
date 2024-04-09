@@ -16,4 +16,4 @@ const prioritySchema = new Schema({
 })
 const Priority = mongoose.model('Priority', prioritySchema)
 
-export default Priority
+export { Priority }

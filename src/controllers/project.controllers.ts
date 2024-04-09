@@ -3,11 +3,11 @@ import { ParamsDictionary } from 'express-serve-static-core'
 import { ObjectId } from 'mongodb'
 import { DEFAULT_LIMIT, DEFAULT_PAGE } from '~/constants/constant'
 import HTTP_STATUS from '~/constants/httpStatus'
-import { projectMessages } from '~/constants/messages/project.messages'
+import { projectMessages } from '~/constants/messages'
 import { IResponseMessage } from '~/interfaces/reponses/response'
-import { IProjectReqBody } from '~/interfaces/requests/Project.requests'
-import Project from '~/models/schemas/Project.schemas'
-import projectService from '~/services/project.services'
+import { IProjectReqBody } from '~/interfaces/requests'
+import { Project } from '~/models/schemas'
+import { projectService } from '~/services'
 
 class ProjectController {
   async create(
@@ -123,4 +123,4 @@ class ProjectController {
 }
 
 const projectController = new ProjectController()
-export default projectController
+export { projectController }

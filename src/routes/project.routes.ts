@@ -1,7 +1,8 @@
 import { Router } from 'express'
-import projectController from '~/controllers/project.controllers'
-import { accessTokenValidator, checkAuthValidator } from '~/middlewares/auth.middlewares'
+import { projectController } from '~/controllers'
 import {
+  accessTokenValidator,
+  checkAuthValidator,
   checkDateValidator,
   checkExistParticipant,
   checkExistParticipantToDelete,
@@ -10,7 +11,7 @@ import {
   createProjectValidator,
   getAllProjectValidator,
   updateProjectValidator
-} from '~/middlewares/project.middlewares'
+} from '~/middlewares'
 const projectRouter = Router()
 
 projectRouter.post(
@@ -67,4 +68,5 @@ projectRouter.delete(
   checkExistParticipantToDelete,
   projectController.deleteParticipant
 )
-export default projectRouter
+
+export { projectRouter }

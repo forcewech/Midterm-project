@@ -2,12 +2,12 @@ import { Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { DEFAULT_LIMIT, DEFAULT_PAGE } from '~/constants/constant'
 import HTTP_STATUS from '~/constants/httpStatus'
-import { userMessages } from '~/constants/messages/user.messages'
+import { userMessages } from '~/constants/messages'
 import { IResponseMessage } from '~/interfaces/reponses/response'
-import { IUpdateUser } from '~/interfaces/requests/User.requests'
-import InviteId from '~/models/schemas/InviteId.schemas'
-import User from '~/models/schemas/User.schemas'
-import userService from '~/services/user.services'
+import { IUpdateUser } from '~/interfaces/requests'
+import { InviteId, User } from '~/models/schemas'
+import { userService } from '~/services'
+
 class UserController {
   async createInviteId(req: Request, res: Response): Promise<Response<IResponseMessage<typeof InviteId>>> {
     try {
@@ -88,4 +88,4 @@ class UserController {
   }
 }
 const userController = new UserController()
-export default userController
+export { userController }

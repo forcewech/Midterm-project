@@ -1,11 +1,11 @@
 import { Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import HTTP_STATUS from '~/constants/httpStatus'
-import { statusMessages } from '~/constants/messages/status.messages'
+import { statusMessages } from '~/constants/messages'
 import { IResponseMessage } from '~/interfaces/reponses/response'
-import { IStatusReqBody } from '~/interfaces/requests/Status.requests'
-import Status from '~/models/schemas/Status.schemas'
-import statusService from '~/services/status.services'
+import { IStatusReqBody } from '~/interfaces/requests'
+import { Status } from '~/models/schemas'
+import { statusService } from '~/services'
 
 class StatusController {
   async create(
@@ -77,4 +77,4 @@ class StatusController {
 }
 
 const statusController = new StatusController()
-export default statusController
+export { statusController }

@@ -7,11 +7,8 @@ import {
   REFRESH_TOKEN_EXPIRES_IN
 } from '~/config/env-config'
 import { ETokenType } from '~/constants/enums'
-import { IRegisterReqBody, IToken } from '~/interfaces/requests/Auth.requests'
-import InviteId from '~/models/schemas/InviteId.schemas'
-import Project from '~/models/schemas/Project.schemas'
-import RefreshToken from '~/models/schemas/RefreshToken.schemas'
-import User from '~/models/schemas/User.schemas'
+import { IRegisterReqBody, IToken } from '~/interfaces/requests'
+import { InviteId, Project, RefreshToken, User } from '~/models/schemas'
 import { hashPassword } from '~/utils/crypto'
 import { signToken } from '~/utils/jwt'
 
@@ -109,4 +106,4 @@ class AuthService {
 }
 
 const authService = new AuthService()
-export default authService
+export { authService }

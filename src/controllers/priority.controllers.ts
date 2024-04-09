@@ -1,11 +1,11 @@
 import { Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import HTTP_STATUS from '~/constants/httpStatus'
-import { priorityMessages } from '~/constants/messages/priority.messages'
+import { priorityMessages } from '~/constants/messages'
 import { IResponseMessage } from '~/interfaces/reponses/response'
-import { IPriorityReqBody } from '~/interfaces/requests/Priority.requests'
-import Priority from '~/models/schemas/Priority.schemas'
-import priorityService from '~/services/priority.services'
+import { IPriorityReqBody } from '~/interfaces/requests'
+import { Priority } from '~/models/schemas'
+import { priorityService } from '~/services'
 
 class PriorityController {
   async create(
@@ -77,4 +77,4 @@ class PriorityController {
 }
 
 const priorityController = new PriorityController()
-export default priorityController
+export { priorityController }

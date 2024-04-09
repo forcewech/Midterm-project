@@ -1,7 +1,7 @@
 import { checkSchema } from 'express-validator'
 import { ObjectId } from 'mongodb'
-import { priorityMessages } from '~/constants/messages/priority.messages'
-import priorityService from '~/services/priority.services'
+import { priorityMessages } from '~/constants/messages'
+import { priorityService } from '~/services'
 import { validate } from '~/utils/validation'
 
 export const createPriorityValidator = validate(

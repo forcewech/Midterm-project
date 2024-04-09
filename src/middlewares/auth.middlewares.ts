@@ -1,5 +1,4 @@
-import { config } from 'dotenv'
-import { NextFunction, Request, RequestHandler, Response } from 'express'
+import { NextFunction, RequestHandler, Request, Response } from 'express'
 import { checkSchema } from 'express-validator'
 import { JsonWebTokenError } from 'jsonwebtoken'
 import { ErrorWithStatus } from '~/common/Errors'
@@ -7,15 +6,13 @@ import { client } from '~/config/connectRedis'
 import { INVITE_SECRET_KEY, JWT_SECRET_ACCESS_TOKEN, JWT_SECRET_REFRESH_TOKEN } from '~/config/env-config'
 import { EUserRole, EUserStatus } from '~/constants/enums'
 import HTTP_STATUS from '~/constants/httpStatus'
-import { authMessages } from '~/constants/messages/auth.messages'
-import InviteId from '~/models/schemas/InviteId.schemas'
-import RefreshToken from '~/models/schemas/RefreshToken.schemas'
-import User from '~/models/schemas/User.schemas'
-import authService from '~/services/auth.services'
+import { authMessages } from '~/constants/messages'
+import { InviteId, RefreshToken, User } from '~/models/schemas'
+import { authService } from '~/services'
 import { hashPassword } from '~/utils/crypto'
 import { verifyToken } from '~/utils/jwt'
 import { validate } from '~/utils/validation'
-config()
+
 export const registerValidator = validate(
   checkSchema(
     {

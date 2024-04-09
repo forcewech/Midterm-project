@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb'
-import { IPriorityReqBody } from '~/interfaces/requests/Priority.requests'
-import Priority from '~/models/schemas/Priority.schemas'
+import { IPriorityReqBody } from '~/interfaces/requests'
+import { Priority } from '~/models/schemas'
 
 class PriorityService {
   async createPriority(payload: IPriorityReqBody): Promise<InstanceType<typeof Priority>> {
@@ -38,4 +38,4 @@ class PriorityService {
 }
 
 const priorityService = new PriorityService()
-export default priorityService
+export { priorityService }

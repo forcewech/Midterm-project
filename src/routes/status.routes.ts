@@ -1,7 +1,12 @@
 import { Router } from 'express'
-import statusController from '~/controllers/status.controllers'
-import { accessTokenValidator, checkAuthValidator } from '~/middlewares/auth.middlewares'
-import { checkStatusIdValidator, createStatusValidator, updateStatusValidator } from '~/middlewares/status.middlewares'
+import { statusController } from '~/controllers'
+import {
+  accessTokenValidator,
+  checkAuthValidator,
+  checkStatusIdValidator,
+  createStatusValidator,
+  updateStatusValidator
+} from '~/middlewares'
 const statusRouter = Router()
 
 statusRouter.post('/', accessTokenValidator, checkAuthValidator, createStatusValidator, statusController.create)
@@ -14,4 +19,5 @@ statusRouter.put(
   checkStatusIdValidator,
   statusController.hiddenStatus
 )
-export default statusRouter
+
+export { statusRouter }

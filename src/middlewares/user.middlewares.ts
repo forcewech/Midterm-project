@@ -1,8 +1,8 @@
 import { checkSchema } from 'express-validator'
 import { ObjectId } from 'mongodb'
 import { EUserStatus } from '~/constants/enums'
-import { userMessages } from '~/constants/messages/user.messages'
-import userService from '~/services/user.services'
+import { userMessages } from '~/constants/messages'
+import { userService } from '~/services'
 import { validate } from '~/utils/validation'
 
 export const getAllUserValidator = validate(

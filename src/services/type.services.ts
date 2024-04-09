@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb'
-import { ITypeReqBody } from '~/interfaces/requests/Type.requests'
-import Type from '~/models/schemas/Type.schemas'
+import { ITypeReqBody } from '~/interfaces/requests'
+import { Type } from '~/models/schemas'
 
 class TypeService {
   async createType(payload: ITypeReqBody): Promise<InstanceType<typeof Type>> {
@@ -34,4 +34,4 @@ class TypeService {
 }
 
 const typeService = new TypeService()
-export default typeService
+export { typeService }

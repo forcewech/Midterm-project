@@ -2,11 +2,11 @@ import { Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { DEFAULT_LIMIT, DEFAULT_PAGE } from '~/constants/constant'
 import HTTP_STATUS from '~/constants/httpStatus'
-import { taskMessages } from '~/constants/messages/task.messages'
+import { taskMessages } from '~/constants/messages'
 import { IResponseMessage } from '~/interfaces/reponses/response'
-import { ITaskReqBody } from '~/interfaces/requests/Task.requests'
-import Task from '~/models/schemas/Task.schemas'
-import taskService from '~/services/task.services'
+import { ITaskReqBody } from '~/interfaces/requests'
+import { Task } from '~/models/schemas'
+import { taskService } from '~/services'
 
 class TaskController {
   async create(
@@ -80,4 +80,4 @@ class TaskController {
 }
 
 const taskController = new TaskController()
-export default taskController
+export { taskController }

@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb'
-import { IStatusReqBody } from '~/interfaces/requests/Status.requests'
-import Status from '~/models/schemas/Status.schemas'
+import { IStatusReqBody } from '~/interfaces/requests'
+import { Status } from '~/models/schemas'
 
 class StatusService {
   async createStatus(payload: IStatusReqBody): Promise<InstanceType<typeof Status>> {
@@ -34,4 +34,4 @@ class StatusService {
 }
 
 const statusService = new StatusService()
-export default statusService
+export { statusService }

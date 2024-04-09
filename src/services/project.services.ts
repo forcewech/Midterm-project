@@ -1,10 +1,9 @@
-import { ObjectId } from 'mongodb'
 import slug from 'slug'
+import { IProjectReqBody } from '~/interfaces/requests'
+import { Project, User } from '~/models/schemas'
 import { v4 as uuidv4 } from 'uuid'
+import { ObjectId } from 'mongodb'
 import { IResponseMessage } from '~/interfaces/reponses/response'
-import { IProjectReqBody } from '~/interfaces/requests/Project.requests'
-import Project from '~/models/schemas/Project.schemas'
-import User from '~/models/schemas/User.schemas'
 
 class ProjectService {
   async createProject(payload: IProjectReqBody): Promise<InstanceType<typeof Project>> {
@@ -217,4 +216,4 @@ class ProjectService {
   }
 }
 const projectService = new ProjectService()
-export default projectService
+export { projectService }

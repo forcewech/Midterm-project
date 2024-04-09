@@ -3,10 +3,11 @@ import { ParamsDictionary } from 'express-serve-static-core'
 import { ObjectId } from 'mongodb'
 import { client } from '~/config/connectRedis'
 import HTTP_STATUS from '~/constants/httpStatus'
-import { authMessages } from '~/constants/messages/auth.messages'
+import { authMessages } from '~/constants/messages'
 import { IResponseMessage } from '~/interfaces/reponses/response'
-import { ILoginReqBody, ILogoutReqBody, IRegisterReqBody, IToken } from '~/interfaces/requests/Auth.requests'
-import authService from '~/services/auth.services'
+import { ILoginReqBody, ILogoutReqBody, IRegisterReqBody, IToken } from '~/interfaces/requests'
+import { authService } from '~/services'
+
 class AuthController {
   async register(
     req: Request<ParamsDictionary, any, IRegisterReqBody>,
@@ -88,4 +89,4 @@ class AuthController {
 }
 
 const authController = new AuthController()
-export default authController
+export { authController }

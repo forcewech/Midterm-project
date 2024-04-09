@@ -1,7 +1,7 @@
 import { checkSchema } from 'express-validator'
 import { ObjectId } from 'mongodb'
-import { statusMessages } from '~/constants/messages/status.messages'
-import statusService from '~/services/status.services'
+import { statusMessages } from '~/constants/messages'
+import { statusService } from '~/services'
 import { validate } from '~/utils/validation'
 
 export const createStatusValidator = validate(
