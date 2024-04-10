@@ -6,6 +6,7 @@ import {
   checkDateValidator,
   checkExistParticipant,
   checkExistParticipantToDelete,
+  checkParticipantInProject,
   checkParticipantValidator,
   checkProjectIdValidator,
   createProjectValidator,
@@ -68,12 +69,12 @@ projectRouter.delete(
   checkExistParticipantToDelete,
   projectController.deleteParticipant
 )
+projectRouter.get('/user/projects', accessTokenValidator, getAllProjectValidator, projectController.getMyProjects)
 projectRouter.get(
-  '/user/projects',
+  '/user/projects/:projectId',
   accessTokenValidator,
-  checkAuthValidator,
-  getAllProjectValidator,
-  projectController.getMyProjects
+  checkParticipantInProject,
+  projectController.getMyDetailProject
 )
 
 export { projectRouter }

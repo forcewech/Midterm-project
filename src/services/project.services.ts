@@ -1,6 +1,6 @@
 import slug from 'slug'
 import { IProjectReqBody } from '~/interfaces/requests'
-import { Project, User } from '~/models/schemas'
+import { Project, Task, User } from '~/models/schemas'
 import { v4 as uuidv4 } from 'uuid'
 import { ObjectId } from 'mongodb'
 import { IResponseMessage } from '~/interfaces/reponses/response'
@@ -37,8 +37,10 @@ class ProjectService {
     )
     return updateProjectData as InstanceType<typeof Project>
   }
-  async deleteProjectById(projectId: string): Promise<InstanceType<typeof Project>> {
-    return (await Project.findByIdAndDelete({ _id: new ObjectId(projectId) })) as InstanceType<typeof Project>
+  async deleteProjectById(projectId: string): Promise<void> {
+    await Project.findByIdAndDelete({ _id: new ObjectId(projectId) })
+    await Task.deleteMany({ project: new ObjectId(projectId) })
+    await User.updateOne({ projects: new ObjectId(projectId) }, { $pull: { projects: new ObjectId(projectId) } })
   }
   async getProjectById(projectId: string): Promise<InstanceType<typeof Project>> {
     const getData = await Project.aggregate([
@@ -257,6 +259,102 @@ class ProjectService {
       currentPage: page
     }
   }
+  async getDetailProject(projectId: string): Promise<InstanceType<typeof Project>> {
+    const data = await Project.aggregate([
+      {
+        $match: {
+          _id: new ObjectId(projectId)
+        }
+      },
+      {
+        $addFields: {
+          totalTasks: {
+            $size: '$tasks'
+          }
+        }
+      },
+      {
+        $lookup: {
+          from: 'tasks',
+          localField: 'tasks',
+          foreignField: '_id',
+          as: 'tasks'
+        }
+      },
+      {
+        $unwind: {
+          path: '$tasks',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $lookup: {
+          from: 'status',
+          localField: 'tasks.status',
+          foreignField: '_id',
+          as: 'tasks.status'
+        }
+      },
+      {
+        $set: {
+          'tasks.status': {
+            $arrayElemAt: ['$tasks.status', 0]
+          }
+        }
+      },
+      {
+        $addFields: {
+          isClosed: {
+            $cond: {
+              if: {
+                $eq: ['$tasks.status.name', 'Closed']
+              },
+              then: true,
+              else: false
+            }
+          }
+        }
+      },
+      {
+        $group: {
+          _id: '$_id',
+          totalTasks: {
+            $sum: 1
+          },
+          totalClosedTasks: {
+            $sum: {
+              $cond: {
+                if: '$isClosed',
+                then: 1,
+                else: 0
+              }
+            }
+          },
+          name: {
+            $first: '$name'
+          },
+          slug: {
+            $first: '$slug'
+          },
+          startDate: {
+            $first: '$startDate'
+          },
+          endDate: {
+            $first: '$endDate'
+          },
+          createdAt: {
+            $first: '$createdAt'
+          },
+          participants: {
+            $first: '$participants'
+          }
+        }
+      }
+    ])
+    data[0].process = `${data[0].totalClosedTasks}/${data[0].totalTasks}`
+    return data[0] as InstanceType<typeof Project>
+  }
 }
+
 const projectService = new ProjectService()
 export { projectService }
