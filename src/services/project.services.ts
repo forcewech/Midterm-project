@@ -229,6 +229,34 @@ class ProjectService {
     await project.save()
     await User.updateOne({ _id: participant }, { $pull: { projects: new ObjectId(projectId) } })
   }
+  async getAllMyProject(
+    userId: string,
+    page: number,
+    pageSize: number
+  ): Promise<IResponseMessage<InstanceType<typeof Project>[]>> {
+    const totalItems = await Project.countDocuments({ participants: new ObjectId(userId) })
+    const totalPage = Math.ceil(totalItems / pageSize)
+    const skip = (page - 1) * pageSize
+    const myProjects = await Project.aggregate([
+      {
+        $match: {
+          participants: new ObjectId(userId)
+        }
+      },
+      {
+        $skip: skip
+      },
+      {
+        $limit: pageSize
+      }
+    ])
+    return {
+      data: myProjects,
+      totalItems,
+      totalPage,
+      currentPage: page
+    }
+  }
 }
 const projectService = new ProjectService()
 export { projectService }

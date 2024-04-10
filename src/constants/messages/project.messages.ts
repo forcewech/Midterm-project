@@ -27,5 +27,6 @@ export const projectMessages = {
   PARTICIPANT_ID_IS_INVALID: 'Participant id is invalid',
   PARTICIPANT_ID_NOT_FOUND: 'Participant id not found',
   START_DATE_CANNOT_BE_AFTER_END_DATE: 'Start date cannot be after end date',
-  PARTICIPANT_NOT_EXIST: 'Participant not exist'
+  PARTICIPANT_NOT_EXIST: 'Participant not exist',
+  GET_ALL_MY_PROJECTS: 'Get all my projects'
 }

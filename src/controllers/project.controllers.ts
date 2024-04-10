@@ -120,6 +120,23 @@ class ProjectController {
       throw new Error(err.message)
     }
   }
+  async getMyProjects(req: Request, res: Response): Promise<Response<IResponseMessage<typeof Project>[]>> {
+    try {
+      const page = parseInt(req.query.page as string) || DEFAULT_PAGE
+      const pageSize = parseInt(req.query.limit as string) || DEFAULT_LIMIT
+      const userId = req.decodedAuthorization?.userId as string
+      const data = await projectService.getAllMyProject(userId, page, pageSize)
+      return res.json({
+        success: true,
+        code: HTTP_STATUS.OK,
+        message: projectMessages.GET_ALL_MY_PROJECTS,
+        data
+      })
+    } catch (error) {
+      const err: Error = error as Error
+      throw new Error(err.message)
+    }
+  }
 }
 
 const projectController = new ProjectController()

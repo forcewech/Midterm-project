@@ -68,5 +68,12 @@ projectRouter.delete(
   checkExistParticipantToDelete,
   projectController.deleteParticipant
 )
+projectRouter.get(
+  '/user/projects',
+  accessTokenValidator,
+  checkAuthValidator,
+  getAllProjectValidator,
+  projectController.getMyProjects
+)
 
 export { projectRouter }
