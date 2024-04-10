@@ -36,12 +36,9 @@ class TaskService {
   async getAllTask(
     page: number,
     pageSize: number,
-    statusId: ObjectId
+    statusId: string
   ): Promise<IResponseMessage<InstanceType<typeof Task>[]>> {
-    const totalItems = await Task.countDocuments({})
-    const totalPage = Math.ceil(totalItems / pageSize)
-    const skip = (page - 1) * pageSize
-    const getAllDataWithPaginate = await Task.aggregate([
+    const totalTasks = await Task.aggregate([
       {
         $lookup: {
           from: 'status',
@@ -62,36 +59,93 @@ class TaskService {
         $set: {
           status: {
             $arrayElemAt: ['$status', 0]
-          },
-          priority: {
-            $arrayElemAt: ['$priority', 0]
           }
         }
       },
       {
         $match: {
-          'status._id': statusId
+          'status._id': new ObjectId(statusId)
         }
       },
       {
-        $sort: {
-          'priority.order': 1
-        }
-      },
-      {
-        $skip: skip
-      },
-      {
-        $limit: pageSize
+        $count: 'total'
       }
     ])
+    const getTotalTasks = statusId ? totalTasks[0].total : await Task.countDocuments({})
+    const totalPage = Math.ceil(getTotalTasks / pageSize)
+    const skip = (page - 1) * pageSize
+    const getAllDataWithPaginate = statusId
+      ? await Task.aggregate([
+          {
+            $lookup: {
+              from: 'status',
+              localField: 'status',
+              foreignField: '_id',
+              as: 'status'
+            }
+          },
+          {
+            $lookup: {
+              from: 'priorities',
+              localField: 'priority',
+              foreignField: '_id',
+              as: 'priority'
+            }
+          },
+          {
+            $set: {
+              status: {
+                $arrayElemAt: ['$status', 0]
+              },
+              priority: {
+                $arrayElemAt: ['$priority', 0]
+              }
+            }
+          },
+          {
+            $match: {
+              'status._id': new ObjectId(statusId)
+            }
+          },
+          {
+            $sort: {
+              'priority.order': 1
+            }
+          },
+          {
+            $skip: skip
+          },
+          {
+            $limit: pageSize
+          }
+        ])
+      : await Task.find({}).skip(skip).limit(pageSize)
     return {
       data: getAllDataWithPaginate,
+      totalItems: getTotalTasks,
+      totalPage,
+      currentPage: page
+    }
+  }
+  async getMytasks(
+    page: number,
+    pageSize: number,
+    userId: string
+  ): Promise<IResponseMessage<InstanceType<typeof Task>[]>> {
+    const totalItems = await Task.countDocuments({ assignedTo: new ObjectId(userId) })
+    const totalPage = Math.ceil(totalItems / pageSize)
+    const skip = (page - 1) * pageSize
+    const myTasks = await Task.find({ assignedTo: new ObjectId(userId) })
+      .skip(skip)
+      .limit(pageSize)
+    return {
+      data: myTasks,
       totalItems,
       totalPage,
       currentPage: page
     }
   }
 }
+
 const taskService = new TaskService()
 export { taskService }

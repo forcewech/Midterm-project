@@ -139,9 +139,8 @@ class ProjectController {
   }
   async getMyDetailProject(req: Request, res: Response): Promise<Response<IResponseMessage<typeof Project>>> {
     try {
-      const statusId = req.query.statusId as string
       const projectId = req.params.projectId as string
-      const data = await projectService.getDetailProject(projectId, new ObjectId(statusId))
+      const data = await projectService.getDetailProject(projectId)
       return res.json({
         success: true,
         code: HTTP_STATUS.OK,

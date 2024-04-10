@@ -66,7 +66,24 @@ class TaskController {
       const statusId = req.query.statusId as string
       const page = parseInt(req.query.page as string) || DEFAULT_PAGE
       const pageSize = parseInt(req.query.limit as string) || DEFAULT_LIMIT
-      const data = await taskService.getAllTask(page, pageSize, new ObjectId(statusId))
+      const data = await taskService.getAllTask(page, pageSize, statusId)
+      return res.json({
+        success: true,
+        code: HTTP_STATUS.OK,
+        message: taskMessages.GET_ALL_TASK_WITH_PAGINATE_SUCCESS,
+        data
+      })
+    } catch (error) {
+      const err: Error = error as Error
+      throw new Error(err.message)
+    }
+  }
+  async getMyTasks(req: Request, res: Response): Promise<Response<IResponseMessage<typeof Task>[]>> {
+    try {
+      const userId = req.decodedAuthorization?.userId as string
+      const page = parseInt(req.query.page as string) || DEFAULT_PAGE
+      const pageSize = parseInt(req.query.limit as string) || DEFAULT_LIMIT
+      const data = await taskService.getMytasks(page, pageSize, userId)
       return res.json({
         success: true,
         code: HTTP_STATUS.OK,

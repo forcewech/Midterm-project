@@ -20,5 +20,6 @@ export const taskMessages = {
   STATUS_ID_IS_REQUIRED: 'Status id is required',
   ASSIGNED_TO_IS_REQUIRED: 'Assigned to is required',
   START_DATE_REQUIRED: 'Start date is required',
-  END_DATE_REQUIRED: 'End date is required'
+  END_DATE_REQUIRED: 'End date is required',
+  GET_MY_TASK_WITH_PAGINATE_SUCCESS: 'Get my task with paginate success'
 }

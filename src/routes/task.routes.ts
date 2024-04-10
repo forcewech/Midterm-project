@@ -50,7 +50,7 @@ taskRouter.put(
   dateInProjectValidator,
   taskController.update
 )
-
 taskRouter.delete('/user/tasks/:taskId', accessTokenValidator, checkTaskIdValidator, taskController.delete)
+taskRouter.get('/user/tasks', accessTokenValidator, getAllTaskValidator, taskController.getMyTasks)
 
 export { taskRouter }

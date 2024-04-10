@@ -259,11 +259,18 @@ class ProjectService {
       currentPage: page
     }
   }
-  async getDetailProject(projectId: string, statusId: ObjectId): Promise<InstanceType<typeof Project>> {
+  async getDetailProject(projectId: string): Promise<InstanceType<typeof Project>> {
     const data = await Project.aggregate([
       {
         $match: {
           _id: new ObjectId(projectId)
+        }
+      },
+      {
+        $addFields: {
+          totalTasks: {
+            $size: '$tasks'
+          }
         }
       },
       {
@@ -289,36 +296,40 @@ class ProjectService {
         }
       },
       {
-        $lookup: {
-          from: 'priorities',
-          localField: 'tasks.priority',
-          foreignField: '_id',
-          as: 'tasks.priority'
-        }
-      },
-      {
         $set: {
           'tasks.status': {
             $arrayElemAt: ['$tasks.status', 0]
-          },
-          'tasks.priority': {
-            $arrayElemAt: ['$tasks.priority', 0]
           }
         }
       },
       {
-        $match: {
-          'tasks.status._id': statusId
-        }
-      },
-      {
-        $sort: {
-          'tasks.priority.order': 1
+        $addFields: {
+          isClosed: {
+            $cond: {
+              if: {
+                $eq: ['$tasks.status.name', 'Closed']
+              },
+              then: true,
+              else: false
+            }
+          }
         }
       },
       {
         $group: {
           _id: '$_id',
+          totalTasks: {
+            $sum: 1
+          },
+          totalClosedTasks: {
+            $sum: {
+              $cond: {
+                if: '$isClosed',
+                then: 1,
+                else: 0
+              }
+            }
+          },
           name: {
             $first: '$name'
           },
@@ -336,13 +347,11 @@ class ProjectService {
           },
           participants: {
             $first: '$participants'
-          },
-          tasks: {
-            $push: '$tasks'
           }
         }
       }
     ])
+    data[0].process = `${data[0].totalClosedTasks}/${data[0].totalTasks}`
     return data[0] as InstanceType<typeof Project>
   }
 }
