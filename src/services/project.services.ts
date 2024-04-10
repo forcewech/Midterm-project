@@ -112,6 +112,13 @@ class ProjectService {
     const skip = (page - 1) * pageSize
     const data = await Project.aggregate([
       {
+        $addFields: {
+          totalTasks: {
+            $size: '$tasks'
+          }
+        }
+      },
+      {
         $lookup: {
           from: 'tasks',
           localField: 'tasks',
@@ -134,9 +141,10 @@ class ProjectService {
         }
       },
       {
-        $unwind: {
-          path: '$tasks.status',
-          preserveNullAndEmptyArrays: true
+        $set: {
+          'tasks.status': {
+            $arrayElemAt: ['$tasks.status', 0]
+          }
         }
       },
       {
@@ -153,31 +161,38 @@ class ProjectService {
         }
       },
       {
-        $addFields: {
-          isNull: {
-            $cond: {
-              if: {
-                $eq: [{ $size: { $objectToArray: '$tasks' } }, 0]
-              },
-              then: true,
-              else: false
-            }
-          }
-        }
-      },
-      {
         $group: {
-          _id: '$name',
-          totalTasks: { $sum: { $cond: { if: '$isNull', then: 0, else: 1 } } },
-          totalClosedTasks: { $sum: { $cond: { if: '$isClosed', then: 1, else: 0 } } }
-        }
-      },
-      {
-        $project: {
-          name: '$_id',
-          _id: 0,
-          totalTasks: 1,
-          totalClosedTasks: 1
+          _id: '$_id',
+          totalTasks: {
+            $sum: 1
+          },
+          totalClosedTasks: {
+            $sum: {
+              $cond: {
+                if: '$isClosed',
+                then: 1,
+                else: 0
+              }
+            }
+          },
+          name: {
+            $first: '$name'
+          },
+          slug: {
+            $first: '$slug'
+          },
+          startDate: {
+            $first: '$startDate'
+          },
+          endDate: {
+            $first: '$endDate'
+          },
+          createdAt: {
+            $first: '$createdAt'
+          },
+          participants: {
+            $first: '$participants'
+          }
         }
       },
       {
