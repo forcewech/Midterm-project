@@ -1,7 +1,12 @@
 import { Router } from 'express'
-import typeController from '~/controllers/type.controllers'
-import { accessTokenValidator, checkAuthValidator } from '~/middlewares/auth.middlewares'
-import { checkTypeIdValidator, createTypeValidator, updateTypeValidator } from '~/middlewares/type.middlewares'
+import { typeController } from '~/controllers'
+import {
+  accessTokenValidator,
+  checkAuthValidator,
+  checkTypeIdValidator,
+  createTypeValidator,
+  updateTypeValidator
+} from '~/middlewares'
 const typeRouter = Router()
 
 typeRouter.post('/', accessTokenValidator, checkAuthValidator, createTypeValidator, typeController.create)
@@ -14,4 +19,5 @@ typeRouter.put(
   checkTypeIdValidator,
   typeController.hiddenType
 )
-export default typeRouter
+
+export { typeRouter }

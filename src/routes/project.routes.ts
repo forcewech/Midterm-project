@@ -1,13 +1,17 @@
 import { Router } from 'express'
-import projectController from '~/controllers/project.controllers'
-import { accessTokenValidator, checkAuthValidator } from '~/middlewares/auth.middlewares'
+import { projectController } from '~/controllers'
 import {
+  accessTokenValidator,
+  checkAuthValidator,
+  checkDateValidator,
+  checkExistParticipant,
+  checkExistParticipantToDelete,
+  checkParticipantValidator,
+  checkProjectIdValidator,
   createProjectValidator,
   getAllProjectValidator,
-  checkProjectIdValidator,
-  updateProjectValidator,
-  checkDateValidator
-} from '~/middlewares/project.middlewares'
+  updateProjectValidator
+} from '~/middlewares'
 const projectRouter = Router()
 
 projectRouter.post(
@@ -52,13 +56,17 @@ projectRouter.patch(
   '/:projectId/participants/:participantId',
   accessTokenValidator,
   checkAuthValidator,
-  checkProjectIdValidator,
+  checkParticipantValidator,
+  checkExistParticipant,
   projectController.addParticipant
 )
 projectRouter.delete(
   '/:projectId/participants/:participantId',
   accessTokenValidator,
   checkAuthValidator,
+  checkParticipantValidator,
+  checkExistParticipantToDelete,
   projectController.deleteParticipant
 )
-export default projectRouter
+
+export { projectRouter }

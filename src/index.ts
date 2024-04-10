@@ -7,13 +7,7 @@ import { connectRedis } from './config/connectRedis'
 import databaseService from './config/database'
 import { PORT } from './config/env-config'
 import { customErrorHandler } from './middlewares/error.middlewares'
-import authRouter from './routes/auth.routes'
-import priorityRouter from './routes/priority.routes'
-import projectRouter from './routes/project.routes'
-import statusRouter from './routes/status.routes'
-import typeRouter from './routes/type.routes'
-import userRouter from './routes/user.routes'
-import taskRouter from './routes/task.routes'
+import { authRouter, priorityRouter, projectRouter, statusRouter, taskRouter, typeRouter, userRouter } from './routes'
 
 const app = express()
 //Midlleware app

@@ -15,4 +15,4 @@ const inviteIdSchema = new Schema({
 })
 const InviteId = mongoose.model('InviteId', inviteIdSchema)
 
-export default InviteId
+export { InviteId }

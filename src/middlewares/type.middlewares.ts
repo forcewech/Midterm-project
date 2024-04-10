@@ -1,7 +1,7 @@
 import { checkSchema } from 'express-validator'
 import { ObjectId } from 'mongodb'
-import { typeMessages } from '~/constants/messages/type.messages'
-import typeService from '~/services/type.services'
+import { typeMessages } from '~/constants/messages'
+import { typeService } from '~/services'
 import { validate } from '~/utils/validation'
 
 export const createTypeValidator = validate(

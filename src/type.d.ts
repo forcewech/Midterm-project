@@ -10,5 +10,6 @@ declare module 'express' {
     decodedTokenInvite?: ITokenPayload
     startDateProject?: Date
     endDateProject?: Date
+    defaultNew?: string
   }
 }

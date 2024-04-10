@@ -17,4 +17,4 @@ const statusSchema = new Schema({
 
 const Status = mongoose.model('Status', statusSchema)
 
-export default Status
+export { Status }

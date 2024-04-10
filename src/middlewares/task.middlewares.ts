@@ -1,22 +1,20 @@
-import { checkSchema } from 'express-validator'
-import { ObjectId } from 'mongodb'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { NextFunction, Request, RequestHandler, Response } from 'express'
-import { priorityMessages } from '~/constants/messages/priority.messages'
-import { projectMessages } from '~/constants/messages/project.messages'
-import { statusMessages } from '~/constants/messages/status.messages'
-import { taskMessages } from '~/constants/messages/task.messages'
-import { typeMessages } from '~/constants/messages/type.messages'
-import { userMessages } from '~/constants/messages/user.messages'
-import priorityService from '~/services/priority.services'
-import projectService from '~/services/project.services'
-import statusService from '~/services/status.services'
-import taskService from '~/services/task.services'
-import typeService from '~/services/type.services'
-import userService from '~/services/user.services'
 import { validate } from '~/utils/validation'
-import { ITaskReqBody } from '~/interfaces/requests/Task.requests'
-import Project from '~/models/schemas/Project.schemas'
+import { checkSchema } from 'express-validator'
+import {
+  priorityMessages,
+  projectMessages,
+  statusMessages,
+  taskMessages,
+  typeMessages,
+  userMessages
+} from '~/constants/messages'
+import { priorityService, projectService, statusService, taskService, typeService, userService } from '~/services'
+import { ObjectId } from 'mongodb'
+import { Project, Status } from '~/models/schemas'
+import { EStatus } from '~/constants/enums'
+import { ITaskReqBody } from '~/interfaces/requests'
 import HTTP_STATUS from '~/constants/httpStatus'
 
 export const createTaskValidator = validate(
@@ -98,7 +96,7 @@ export const createTaskValidator = validate(
       },
       statusId: {
         custom: {
-          options: async (value) => {
+          options: async (value, { req }) => {
             if (value) {
               if (!ObjectId.isValid(value)) {
                 throw new Error(statusMessages.STATUS_ID_IS_INVALID)
@@ -107,6 +105,9 @@ export const createTaskValidator = validate(
               if (!isIdStatus) {
                 throw new Error(statusMessages.STATUS_NOT_FOUND)
               }
+            } else {
+              const defaultNew = await Status.findOne({ name: EStatus.NEW })
+              req.defaultNew = defaultNew ? defaultNew : null
             }
             return true
           }

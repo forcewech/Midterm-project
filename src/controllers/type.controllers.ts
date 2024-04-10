@@ -1,10 +1,11 @@
-import { ITypeReqBody } from '~/interfaces/requests/Type.requests'
 import { Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
-import Type from '~/models/schemas/Type.schemas'
-import { IResponseMessage } from '~/interfaces/reponses/response'
-import typeService from '~/services/type.services'
 import HTTP_STATUS from '~/constants/httpStatus'
+import { typeMessages } from '~/constants/messages'
+import { IResponseMessage } from '~/interfaces/reponses/response'
+import { ITypeReqBody } from '~/interfaces/requests'
+import { Type } from '~/models/schemas'
+import { typeService } from '~/services'
 
 class TypeController {
   async create(
@@ -12,8 +13,13 @@ class TypeController {
     res: Response
   ): Promise<Response<IResponseMessage<typeof Type>>> {
     try {
-      const result = await typeService.createType(req.body)
-      return res.status(HTTP_STATUS.CREATED).json(result)
+      const data = await typeService.createType(req.body)
+      return res.status(HTTP_STATUS.CREATED).json({
+        success: true,
+        code: HTTP_STATUS.CREATED,
+        message: typeMessages.CREATE_TYPE_SUCCESS,
+        data
+      })
     } catch (error) {
       const err: Error = error as Error
       throw new Error(err.message)
@@ -25,8 +31,13 @@ class TypeController {
   ): Promise<Response<IResponseMessage<typeof Type>>> {
     try {
       const typeId = req.params.typeId
-      const result = await typeService.updateType(req.body, typeId)
-      return res.json(result)
+      const data = await typeService.updateType(req.body, typeId)
+      return res.json({
+        success: true,
+        code: HTTP_STATUS.OK,
+        message: typeMessages.UPDATE_TYPE_SUCCESS,
+        data
+      })
     } catch (error) {
       const err: Error = error as Error
       throw new Error(err.message)
@@ -34,8 +45,13 @@ class TypeController {
   }
   async getAllType(req: Request, res: Response): Promise<Response<IResponseMessage<typeof Type>[]>> {
     try {
-      const result = await typeService.getAllType()
-      return res.json(result)
+      const data = await typeService.getAllType()
+      return res.json({
+        success: true,
+        code: HTTP_STATUS.OK,
+        message: typeMessages.GET_ALL_TYPE_SUCCESS,
+        data
+      })
     } catch (error) {
       const err: Error = error as Error
       throw new Error(err.message)
@@ -47,8 +63,12 @@ class TypeController {
   ): Promise<Response<IResponseMessage<typeof Type>>> {
     try {
       const typeId = req.params.typeId
-      const result = await typeService.hiddenType(typeId)
-      return res.json(result)
+      await typeService.hiddenType(typeId)
+      return res.json({
+        success: true,
+        code: HTTP_STATUS.OK,
+        message: typeMessages.TYPE_HIDDEN_SUCCESS
+      })
     } catch (error) {
       const err: Error = error as Error
       throw new Error(err.message)
@@ -57,4 +77,4 @@ class TypeController {
 }
 
 const typeController = new TypeController()
-export default typeController
+export { typeController }

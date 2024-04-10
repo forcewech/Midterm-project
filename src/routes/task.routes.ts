@@ -1,14 +1,15 @@
 import { Router } from 'express'
-import taskController from '~/controllers/task.controllers'
-import { accessTokenValidator, checkAuthValidator } from '~/middlewares/auth.middlewares'
+import { taskController } from '~/controllers'
 import {
-  dateInProjectValidator,
+  accessTokenValidator,
+  checkAuthValidator,
   checkTaskIdValidator,
-  getAllTaskValidator,
   checkUsersInProject,
   createTaskValidator,
+  dateInProjectValidator,
+  getAllTaskValidator,
   updateTaskValidator
-} from '~/middlewares/task.middlewares'
+} from '~/middlewares'
 const taskRouter = Router()
 
 taskRouter.post(
@@ -32,4 +33,5 @@ taskRouter.put(
 )
 taskRouter.delete('/:taskId', accessTokenValidator, checkAuthValidator, checkTaskIdValidator, taskController.delete)
 taskRouter.get('/', accessTokenValidator, checkAuthValidator, getAllTaskValidator, taskController.getAllTask)
-export default taskRouter
+
+export { taskRouter }

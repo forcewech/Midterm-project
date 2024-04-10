@@ -1,14 +1,9 @@
-export enum ETokenType {
-  ACCESS_TOKEN,
-  REFRESH_TOKEN
-}
-
 export enum EUserRole {
   ADMIN = 'admin',
   USER = 'user'
 }
 
-export enum EStatus {
+export enum EUserStatus {
   ACTIVE = 'active',
   INACTIVE = 'inactive'
 }

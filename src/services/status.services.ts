@@ -1,42 +1,23 @@
 import { ObjectId } from 'mongodb'
-import HTTP_STATUS from '~/constants/httpStatus'
-import { statusMessages } from '~/constants/messages/status.messages'
-import { IResponseMessage } from '~/interfaces/reponses/response'
-import { IStatusReqBody } from '~/interfaces/requests/Status.requests'
-import Status from '~/models/schemas/Status.schemas'
+import { IStatusReqBody } from '~/interfaces/requests'
+import { Status } from '~/models/schemas'
 
 class StatusService {
-  async createStatus(payload: IStatusReqBody): Promise<IResponseMessage<InstanceType<typeof Status>>> {
+  async createStatus(payload: IStatusReqBody): Promise<InstanceType<typeof Status>> {
     const newStatus = new Status({
       ...payload
     })
     await newStatus.save()
-    return {
-      success: true,
-      code: HTTP_STATUS.CREATED,
-      message: statusMessages.CREATE_STATUS_SUCCESS,
-      data: newStatus
-    }
+    return newStatus
   }
-  async updateStatus(
-    payload: IStatusReqBody,
-    statusId: string
-  ): Promise<IResponseMessage<InstanceType<typeof Status>>> {
+  async updateStatus(payload: IStatusReqBody, statusId: string): Promise<InstanceType<typeof Status>> {
     const updateStatus = await Status.findByIdAndUpdate({ _id: new ObjectId(statusId) }, { ...payload }, { new: true })
-    return {
-      success: true,
-      code: HTTP_STATUS.OK,
-      message: statusMessages.UPDATE_STATUS_SUCCESS,
-      data: updateStatus as InstanceType<typeof Status>
-    }
+    return updateStatus as InstanceType<typeof Status>
   }
-  async hiddenStatus(statusId: string): Promise<IResponseMessage<InstanceType<typeof Status>>> {
-    await Status.findByIdAndUpdate({ _id: new ObjectId(statusId) }, { isHidden: true })
-    return {
-      success: true,
-      code: HTTP_STATUS.OK,
-      message: statusMessages.STATUS_HIDDEN_SUCCESS
-    }
+  async hiddenStatus(statusId: string): Promise<InstanceType<typeof Status>> {
+    return (await Status.findByIdAndUpdate({ _id: new ObjectId(statusId) }, { isHidden: true })) as InstanceType<
+      typeof Status
+    >
   }
   async checkStatusExist(name: string): Promise<boolean> {
     const status = await Status.findOne({ name })
@@ -46,16 +27,11 @@ class StatusService {
     const statusId = await Status.findOne({ _id: new ObjectId(id) })
     return Boolean(statusId)
   }
-  async getAllStatus(): Promise<IResponseMessage<InstanceType<typeof Status>[]>> {
+  async getAllStatus(): Promise<InstanceType<typeof Status>[]> {
     const listStatus = await Status.find({}).sort({ order: 1 })
-    return {
-      success: true,
-      code: HTTP_STATUS.OK,
-      message: statusMessages.GET_ALL_STATUS_SUCCESS,
-      data: listStatus
-    }
+    return listStatus
   }
 }
 
 const statusService = new StatusService()
-export default statusService
+export { statusService }

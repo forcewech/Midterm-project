@@ -16,4 +16,4 @@ const typeSchema = new Schema({
 })
 const Type = mongoose.model('Type', typeSchema)
 
-export default Type
+export { Type }

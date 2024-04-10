@@ -1,21 +1,18 @@
-import { config } from 'dotenv'
-import { NextFunction, Request, RequestHandler, Response } from 'express'
+import { NextFunction, RequestHandler, Request, Response } from 'express'
 import { checkSchema } from 'express-validator'
 import { JsonWebTokenError } from 'jsonwebtoken'
 import { ErrorWithStatus } from '~/common/Errors'
 import { client } from '~/config/connectRedis'
 import { INVITE_SECRET_KEY, JWT_SECRET_ACCESS_TOKEN, JWT_SECRET_REFRESH_TOKEN } from '~/config/env-config'
-import { EStatus, EUserRole } from '~/constants/enums'
+import { EUserRole, EUserStatus } from '~/constants/enums'
 import HTTP_STATUS from '~/constants/httpStatus'
-import { authMessages } from '~/constants/messages/auth.messages'
-import InviteId from '~/models/schemas/InviteId.schemas'
-import RefreshToken from '~/models/schemas/RefreshToken.schemas'
-import User from '~/models/schemas/User.schemas'
-import authService from '~/services/auth.services'
+import { authMessages } from '~/constants/messages'
+import { InviteId, RefreshToken, User } from '~/models/schemas'
+import { authService } from '~/services'
 import { hashPassword } from '~/utils/crypto'
 import { verifyToken } from '~/utils/jwt'
 import { validate } from '~/utils/validation'
-config()
+
 export const registerValidator = validate(
   checkSchema(
     {
@@ -93,7 +90,7 @@ export const registerValidator = validate(
             if (!invite) {
               throw new Error(authMessages.INVITE_ID_NOT_FOUND)
             }
-            if (invite.status === EStatus.INACTIVE) {
+            if (invite.status === EUserStatus.INACTIVE) {
               throw new Error(authMessages.INVITE_ID_IS_INACTIVE)
             }
             try {
@@ -144,7 +141,7 @@ export const loginValidate = validate(
             if (user == null) {
               throw new Error(authMessages.USERNAME_OR_PASSWORD_IS_INCORRECT)
             }
-            if (user.status === EStatus.INACTIVE) {
+            if (user.status === EUserStatus.INACTIVE) {
               throw new Error(authMessages.YOUR_ACCOUNT_IS_CURRENTLY_INACTIVE)
             }
             req.user = user

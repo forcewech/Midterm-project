@@ -1,11 +1,12 @@
 import { Router } from 'express'
-import priorityController from '~/controllers/priority.controllers'
-import { accessTokenValidator, checkAuthValidator } from '~/middlewares/auth.middlewares'
+import { priorityController } from '~/controllers'
 import {
+  accessTokenValidator,
+  checkAuthValidator,
   checkPriorityIdValidator,
   createPriorityValidator,
   updatePriorityValidator
-} from '~/middlewares/priority.middlewares'
+} from '~/middlewares'
 const priorityRouter = Router()
 
 priorityRouter.post('/', accessTokenValidator, checkAuthValidator, createPriorityValidator, priorityController.create)
@@ -24,4 +25,5 @@ priorityRouter.put(
   checkPriorityIdValidator,
   priorityController.hiddenPriority
 )
-export default priorityRouter
+
+export { priorityRouter }
