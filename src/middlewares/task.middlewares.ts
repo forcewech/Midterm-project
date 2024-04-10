@@ -367,8 +367,9 @@ export const checkUsersInProject: RequestHandler = async (
   next: NextFunction
 ) => {
   try {
+    const userId = req.decodedAuthorization?.userId
     const { projectId } = req.body
-    const { assignedTo } = req.body
+    const assignedTo = req.body.assignedTo ?? userId
     const data = await Project.aggregate([
       {
         $match: {
@@ -377,7 +378,7 @@ export const checkUsersInProject: RequestHandler = async (
         }
       }
     ])
-    if (data.length === 0) {
+    if (!data.length) {
       return res.status(HTTP_STATUS.UNPROCESSABLE_ETITY).json({
         success: false,
         code: HTTP_STATUS.UNPROCESSABLE_ETITY,

@@ -137,6 +137,22 @@ class ProjectController {
       throw new Error(err.message)
     }
   }
+  async getMyDetailProject(req: Request, res: Response): Promise<Response<IResponseMessage<typeof Project>>> {
+    try {
+      const statusId = req.query.statusId as string
+      const projectId = req.params.projectId as string
+      const data = await projectService.getDetailProject(projectId, new ObjectId(statusId))
+      return res.json({
+        success: true,
+        code: HTTP_STATUS.OK,
+        message: projectMessages.GET_ALL_MY_PROJECTS,
+        data
+      })
+    } catch (error) {
+      const err: Error = error as Error
+      throw new Error(err.message)
+    }
+  }
 }
 
 const projectController = new ProjectController()

@@ -261,3 +261,32 @@ export const checkExistParticipantToDelete: RequestHandler = async (
     throw new Error(err.message)
   }
 }
+export const checkParticipantInProject: RequestHandler = async (
+  req: Request<ParamsDictionary, any, IProjectReqBody>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const projectId = req.params.projectId
+    const participant = req.decodedAuthorization?.userId
+    const data = await Project.aggregate([
+      {
+        $match: {
+          _id: new ObjectId(projectId),
+          participants: new ObjectId(participant)
+        }
+      }
+    ])
+    if (!data.length) {
+      return res.status(HTTP_STATUS.UNPROCESSABLE_ETITY).json({
+        success: false,
+        code: HTTP_STATUS.UNPROCESSABLE_ETITY,
+        message: projectMessages.PARTICIPANT_NOT_EXIST
+      })
+    }
+    next()
+  } catch (error) {
+    const err: Error = error as Error
+    throw new Error(err.message)
+  }
+}

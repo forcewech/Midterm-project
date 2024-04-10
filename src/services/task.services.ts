@@ -29,13 +29,14 @@ class TaskService {
     const updateTaskData = await Task.findByIdAndUpdate({ _id: new ObjectId(taskId) }, { ...payload }, { new: true })
     return updateTaskData as InstanceType<typeof Task>
   }
-  async deleteTaskById(taskId: string): Promise<InstanceType<typeof Task>> {
-    return (await Task.findByIdAndDelete({ _id: new ObjectId(taskId) })) as InstanceType<typeof Task>
+  async deleteTaskById(taskId: string): Promise<void> {
+    await Task.findByIdAndDelete({ _id: new ObjectId(taskId) })
+    await Project.updateOne({ tasks: taskId }, { $pull: { tasks: new ObjectId(taskId) } })
   }
   async getAllTask(
     page: number,
     pageSize: number,
-    status: string
+    statusId: ObjectId
   ): Promise<IResponseMessage<InstanceType<typeof Task>[]>> {
     const totalItems = await Task.countDocuments({})
     const totalPage = Math.ceil(totalItems / pageSize)
@@ -69,7 +70,7 @@ class TaskService {
       },
       {
         $match: {
-          'status.name': status
+          'status._id': statusId
         }
       },
       {
