@@ -3,6 +3,7 @@ import { taskController } from '~/controllers'
 import {
   accessTokenValidator,
   checkAuthValidator,
+  checkDateValidator,
   checkTaskIdValidator,
   checkUsersInProject,
   createTaskValidator,
@@ -18,6 +19,7 @@ taskRouter.post(
   checkAuthValidator,
   createTaskValidator,
   checkUsersInProject,
+  checkDateValidator,
   dateInProjectValidator,
   taskController.create
 )
@@ -28,6 +30,7 @@ taskRouter.put(
   updateTaskValidator,
   checkTaskIdValidator,
   checkUsersInProject,
+  checkDateValidator,
   dateInProjectValidator,
   taskController.update
 )

@@ -12,7 +12,7 @@ import {
 } from '~/constants/messages'
 import { priorityService, projectService, statusService, taskService, typeService, userService } from '~/services'
 import { ObjectId } from 'mongodb'
-import { Project, Status } from '~/models/schemas'
+import { Project, Status, Task } from '~/models/schemas'
 import { EStatus } from '~/constants/enums'
 import { ITaskReqBody } from '~/interfaces/requests'
 import HTTP_STATUS from '~/constants/httpStatus'
@@ -21,11 +21,11 @@ export const createTaskValidator = validate(
   checkSchema(
     {
       name: {
-        isString: {
-          errorMessage: taskMessages.NAME_MUST_BE_A_STRING
-        },
         notEmpty: {
           errorMessage: taskMessages.NAME_IS_REQUIRED
+        },
+        isString: {
+          errorMessage: taskMessages.NAME_MUST_BE_A_STRING
         },
         custom: {
           options: async (value) => {
@@ -161,6 +161,7 @@ export const updateTaskValidator = validate(
   checkSchema(
     {
       name: {
+        optional: true,
         custom: {
           options: async (value) => {
             if (value) {
@@ -174,6 +175,7 @@ export const updateTaskValidator = validate(
         }
       },
       projectId: {
+        optional: true,
         custom: {
           options: async (value, { req }) => {
             if (value) {
@@ -194,6 +196,7 @@ export const updateTaskValidator = validate(
         }
       },
       typeId: {
+        optional: true,
         custom: {
           options: async (value) => {
             if (value) {
@@ -210,6 +213,7 @@ export const updateTaskValidator = validate(
         }
       },
       priorityId: {
+        optional: true,
         custom: {
           options: async (value) => {
             if (value) {
@@ -226,6 +230,7 @@ export const updateTaskValidator = validate(
         }
       },
       statusId: {
+        optional: true,
         custom: {
           options: async (value) => {
             if (value) {
@@ -242,6 +247,7 @@ export const updateTaskValidator = validate(
         }
       },
       assignedTo: {
+        optional: true,
         custom: {
           options: async (value) => {
             if (value) {
@@ -258,9 +264,7 @@ export const updateTaskValidator = validate(
         }
       },
       startDate: {
-        notEmpty: {
-          errorMessage: taskMessages.START_DATE_REQUIRED
-        },
+        optional: true,
         isISO8601: {
           options: {
             strict: true,
@@ -270,9 +274,7 @@ export const updateTaskValidator = validate(
         }
       },
       endDate: {
-        notEmpty: {
-          errorMessage: taskMessages.END_DATE_REQUIRED
-        },
+        optional: true,
         isISO8601: {
           options: {
             strict: true,
@@ -285,16 +287,63 @@ export const updateTaskValidator = validate(
     ['body']
   )
 )
-export const dateInProjectValidator: RequestHandler = (
+export const dateInProjectValidator: RequestHandler = async (
   req: Request<ParamsDictionary, any, ITaskReqBody>,
   res: Response,
   next: NextFunction
 ) => {
   try {
     const data = req.body
-    const startDateProject = req.startDateProject as Date
-    const endDateProject = req.endDateProject as Date
-    if (data.startDate < startDateProject.toISOString() || data.endDate > endDateProject.toISOString()) {
+    const taskId = req.params.taskId
+    const dateInTask = await Task.aggregate([
+      {
+        $match: {
+          _id: new ObjectId(taskId)
+        }
+      },
+      {
+        $lookup: {
+          from: 'projects',
+          localField: 'project',
+          foreignField: '_id',
+          as: 'project'
+        }
+      },
+      {
+        $set: {
+          project: {
+            $arrayElemAt: ['$project', 0]
+          }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          startDate: 1,
+          endDate: 1
+        }
+      }
+    ])
+    const dateInProject = await Project.aggregate([
+      {
+        $match: {
+          _id: new ObjectId(data.projectId)
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          startDate: 1,
+          endDate: 1
+        }
+      }
+    ])
+    const projectInTask = await Project.findOne({ tasks: new ObjectId(taskId) })
+    const startDateTask = data?.startDate ?? dateInTask[0].startDate.toISOString()
+    const endDateTask = data?.endDate ?? dateInTask[0].endDate.toISOString()
+    const startDateProject = dateInProject[0]?.startDate.toISOString() ?? projectInTask?.startDate.toISOString()
+    const endDateProject = dateInProject[0]?.endDate.toISOString() ?? projectInTask?.endDate.toISOString()
+    if (startDateTask < startDateProject || endDateTask > endDateProject) {
       return res.status(HTTP_STATUS.UNPROCESSABLE_ETITY).json({
         success: false,
         code: HTTP_STATUS.UNPROCESSABLE_ETITY,
@@ -367,23 +416,24 @@ export const checkUsersInProject: RequestHandler = async (
   next: NextFunction
 ) => {
   try {
-    const userId = req.decodedAuthorization?.userId
-    const { projectId } = req.body
-    const assignedTo = req.body.assignedTo ?? userId
-    const data = await Project.aggregate([
-      {
-        $match: {
-          _id: new ObjectId(projectId),
-          participants: new ObjectId(assignedTo)
+    const projectId = req.body.projectId
+    const assignedTo = req.body.assignedTo
+    if (projectId && assignedTo) {
+      const data = await Project.aggregate([
+        {
+          $match: {
+            _id: new ObjectId(projectId),
+            participants: new ObjectId(assignedTo)
+          }
         }
+      ])
+      if (!data.length) {
+        return res.status(HTTP_STATUS.UNPROCESSABLE_ETITY).json({
+          success: false,
+          code: HTTP_STATUS.UNPROCESSABLE_ETITY,
+          message: taskMessages.USER_IS_NOT_A_MEMBER_OF_THE_PROJECT
+        })
       }
-    ])
-    if (!data.length) {
-      return res.status(HTTP_STATUS.UNPROCESSABLE_ETITY).json({
-        success: false,
-        code: HTTP_STATUS.UNPROCESSABLE_ETITY,
-        message: taskMessages.USER_IS_NOT_A_MEMBER_OF_THE_PROJECT
-      })
     }
     next()
   } catch (error) {

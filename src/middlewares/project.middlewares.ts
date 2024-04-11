@@ -30,27 +30,27 @@ export const createProjectValidator = validate(
         }
       },
       startDate: {
+        notEmpty: {
+          errorMessage: projectMessages.START_DATE_REQUIRED
+        },
         isISO8601: {
           options: {
             strict: true,
             strictSeparator: true
           },
           errorMessage: projectMessages.START_DATE_MUST_BE_ISO8601
-        },
-        notEmpty: {
-          errorMessage: projectMessages.START_DATE_REQUIRED
         }
       },
       endDate: {
+        notEmpty: {
+          errorMessage: projectMessages.END_DATE_REQUIRED
+        },
         isISO8601: {
           options: {
             strict: true,
             strictSeparator: true
           },
           errorMessage: projectMessages.END_DATE_MUST_BE_ISO8601
-        },
-        notEmpty: {
-          errorMessage: projectMessages.END_DATE_REQUIRED
         }
       }
     },
@@ -61,6 +61,7 @@ export const createProjectValidator = validate(
 export const updateProjectValidator = validate(
   checkSchema({
     name: {
+      optional: true,
       custom: {
         options: async (value) => {
           if (value) {
@@ -74,6 +75,7 @@ export const updateProjectValidator = validate(
       }
     },
     startDate: {
+      optional: true,
       isISO8601: {
         options: {
           strict: true,
@@ -83,6 +85,7 @@ export const updateProjectValidator = validate(
       }
     },
     endDate: {
+      optional: true,
       isISO8601: {
         options: {
           strict: true,
@@ -183,18 +186,42 @@ export const checkParticipantValidator = validate(
     ['params']
   )
 )
-export const checkDateValidator: RequestHandler = (
+export const checkDateValidator: RequestHandler = async (
   req: Request<ParamsDictionary, any, IProjectReqBody>,
   res: Response,
   next: NextFunction
 ) => {
   try {
     const data = req.body
-    if (data.startDate > data.endDate) {
+    const projectId = req.params.projectId
+    const dateInProject = await Project.aggregate([
+      {
+        $match: {
+          _id: new ObjectId(projectId)
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          startDate: 1,
+          endDate: 1
+        }
+      }
+    ])
+    const startDateProject = data.startDate ?? dateInProject[0].startDate.toISOString()
+    const endDateProject = data.endDate ?? dateInProject[0].endDate.toISOString()
+    if (startDateProject > endDateProject) {
       return res.status(HTTP_STATUS.UNPROCESSABLE_ETITY).json({
         success: false,
         code: HTTP_STATUS.UNPROCESSABLE_ETITY,
         message: projectMessages.START_DATE_CANNOT_BE_AFTER_END_DATE
+      })
+    }
+    if (startDateProject < new Date().toISOString()) {
+      return res.status(HTTP_STATUS.UNPROCESSABLE_ETITY).json({
+        success: false,
+        code: HTTP_STATUS.UNPROCESSABLE_ETITY,
+        message: projectMessages.START_DATE_CANNOT_START_IN_THE_PAST
       })
     }
     next()

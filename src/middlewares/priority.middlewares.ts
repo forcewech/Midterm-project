@@ -46,6 +46,7 @@ export const updatePriorityValidator = validate(
   checkSchema(
     {
       name: {
+        optional: true,
         custom: {
           options: async (value) => {
             const isExistPriority = await priorityService.checkPriorityExist(value)
@@ -57,6 +58,7 @@ export const updatePriorityValidator = validate(
         }
       },
       order: {
+        optional: true,
         custom: {
           options: async (value) => {
             if (value) {

@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb'
-import { ITypeReqBody } from '~/interfaces/requests'
+import { ITypeReqBody, IUpdateType } from '~/interfaces/requests'
 import { Type } from '~/models/schemas'
 
 class TypeService {
@@ -10,7 +10,7 @@ class TypeService {
     await newType.save()
     return newType
   }
-  async updateType(payload: ITypeReqBody, typeId: string): Promise<InstanceType<typeof Type>> {
+  async updateType(payload: IUpdateType, typeId: string): Promise<InstanceType<typeof Type>> {
     const updateType = await Type.findByIdAndUpdate({ _id: new ObjectId(typeId) }, { ...payload }, { new: true })
     return updateType as InstanceType<typeof Type>
   }

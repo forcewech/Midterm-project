@@ -11,7 +11,14 @@ const statusRouter = Router()
 
 statusRouter.post('/', accessTokenValidator, checkAuthValidator, createStatusValidator, statusController.create)
 statusRouter.get('/', accessTokenValidator, checkAuthValidator, statusController.getAllStatus)
-statusRouter.put('/:statusId', accessTokenValidator, checkAuthValidator, updateStatusValidator, statusController.update)
+statusRouter.put(
+  '/:statusId',
+  accessTokenValidator,
+  checkAuthValidator,
+  checkStatusIdValidator,
+  updateStatusValidator,
+  statusController.update
+)
 statusRouter.put(
   '/:statusId/hide',
   accessTokenValidator,

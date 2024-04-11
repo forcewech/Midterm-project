@@ -1,9 +1,9 @@
-import slug from 'slug'
-import { IProjectReqBody } from '~/interfaces/requests'
-import { Project, Task, User } from '~/models/schemas'
-import { v4 as uuidv4 } from 'uuid'
 import { ObjectId } from 'mongodb'
+import slug from 'slug'
+import { v4 as uuidv4 } from 'uuid'
 import { IResponseMessage } from '~/interfaces/reponses/response'
+import { IProjectReqBody, IUpdateProject } from '~/interfaces/requests'
+import { Project, Task, User } from '~/models/schemas'
 
 class ProjectService {
   async createProject(payload: IProjectReqBody): Promise<InstanceType<typeof Project>> {
@@ -24,14 +24,12 @@ class ProjectService {
     const projectId = await Project.findOne({ _id: new ObjectId(id) })
     return Boolean(projectId)
   }
-  async updateProjectById(projectId: string, updateData: IProjectReqBody): Promise<InstanceType<typeof Project>> {
+  async updateProjectById(projectId: string, updateData: IUpdateProject): Promise<InstanceType<typeof Project>> {
+    const payload = updateData.name ? { ...updateData, slug: slug(`${updateData.name} ${uuidv4()}`) } : updateData
     const updateProjectData = await Project.findByIdAndUpdate(
       { _id: new ObjectId(projectId) },
       {
-        ...updateData,
-        slug: slug(`${updateData.name} ${uuidv4()}`),
-        startDate: new Date(updateData.startDate),
-        endDate: new Date(updateData.endDate)
+        ...payload
       },
       { new: true }
     )

@@ -23,7 +23,7 @@ projectRouter.post(
   checkDateValidator,
   projectController.create
 )
-projectRouter.put(
+projectRouter.patch(
   '/:projectId',
   accessTokenValidator,
   checkAuthValidator,
