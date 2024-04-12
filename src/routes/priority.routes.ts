@@ -15,6 +15,7 @@ priorityRouter.put(
   '/:priorityId',
   accessTokenValidator,
   checkAuthValidator,
+  checkPriorityIdValidator,
   updatePriorityValidator,
   priorityController.update
 )

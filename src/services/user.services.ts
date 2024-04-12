@@ -2,7 +2,7 @@ import { ObjectId } from 'mongodb'
 import { INVITE_SECRET_KEY, INVITE_TOKEN_EXPIRES_IN } from '~/config/env-config'
 import { IResponseMessage } from '~/interfaces/reponses/response'
 import { IUpdateUser } from '~/interfaces/requests'
-import { InviteId, User } from '~/models/schemas'
+import { InviteId, Project, Task, User } from '~/models/schemas'
 import { signToken } from '~/utils/jwt'
 
 class UserService {
@@ -63,15 +63,20 @@ class UserService {
     ])
     return getData[0] as InstanceType<typeof User>
   }
-  async deleteUserById(userId: string): Promise<InstanceType<typeof User>> {
-    return (await User.findByIdAndDelete({ _id: new ObjectId(userId) })) as InstanceType<typeof User>
+  async deleteUserById(userId: string): Promise<void> {
+    await User.findByIdAndDelete({ _id: new ObjectId(userId) })
+    await Task.updateMany({ assignedTo: new ObjectId(userId) }, { $set: { assignedTo: null } })
+    await Project.updateMany({ participants: new ObjectId(userId) }, { $pull: { participants: new ObjectId(userId) } })
   }
   async updateUserById(userId: string, updateData: IUpdateUser): Promise<InstanceType<typeof User>> {
+    const payload = updateData.dateOfBirth
+      ? { ...updateData, dateOfBirth: new Date(updateData.dateOfBirth) }
+      : updateData
     const updateUserData = await User.findByIdAndUpdate(
       { _id: new ObjectId(userId) },
       {
-        ...updateData,
-        dateOfBirth: new Date(updateData.dateOfBirth)
+        ...payload,
+        updatedAt: new Date().toISOString()
       },
       { new: true }
     )

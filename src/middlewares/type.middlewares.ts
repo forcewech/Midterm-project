@@ -40,6 +40,7 @@ export const updateTypeValidator = validate(
   checkSchema(
     {
       name: {
+        optional: true,
         isString: {
           errorMessage: typeMessages.NAME_MUST_BE_A_STRING
         },
@@ -56,6 +57,7 @@ export const updateTypeValidator = validate(
         }
       },
       color: {
+        optional: true,
         isString: {
           errorMessage: typeMessages.COLOR_MUST_BE_A_STRING
         }

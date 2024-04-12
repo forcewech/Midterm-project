@@ -1,6 +1,6 @@
 export interface IUpdateUser {
-  name: string
-  dateOfBirth: string
-  email: string
-  status: string
+  name?: string
+  dateOfBirth?: string
+  email?: string
+  status?: string
 }

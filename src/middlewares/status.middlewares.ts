@@ -46,6 +46,7 @@ export const updateStatusValidator = validate(
   checkSchema(
     {
       name: {
+        optional: true,
         isString: {
           errorMessage: statusMessages.NAME_MUST_BE_A_STRING
         },
@@ -62,6 +63,7 @@ export const updateStatusValidator = validate(
         }
       },
       order: {
+        optional: true,
         custom: {
           options: async (value) => {
             const regex = /^\d+$/

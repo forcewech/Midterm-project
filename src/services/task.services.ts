@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb'
 import { IResponseMessage } from '~/interfaces/reponses/response'
-import { ITaskReqBody } from '~/interfaces/requests'
+import { ITaskReqBody, IUpdateTask } from '~/interfaces/requests'
 import { Project, Task } from '~/models/schemas'
 
 class TaskService {
@@ -25,8 +25,16 @@ class TaskService {
     const taskId = await Task.findOne({ _id: new ObjectId(id) })
     return Boolean(taskId)
   }
-  async updateTask(payload: ITaskReqBody, taskId: string): Promise<InstanceType<typeof Task>> {
+  async updateTask(payload: IUpdateTask, taskId: string): Promise<InstanceType<typeof Task>> {
     const updateTaskData = await Task.findByIdAndUpdate({ _id: new ObjectId(taskId) }, { ...payload }, { new: true })
+    if (payload.projectId) {
+      await Project.updateOne({ tasks: taskId }, { $pull: { tasks: new ObjectId(taskId) } })
+      await Project.findByIdAndUpdate(
+        { _id: payload.projectId },
+        { $push: { tasks: new ObjectId(taskId) } },
+        { new: true }
+      )
+    }
     return updateTaskData as InstanceType<typeof Task>
   }
   async deleteTaskById(taskId: string): Promise<void> {

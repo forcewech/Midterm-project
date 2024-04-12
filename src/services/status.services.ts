@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb'
-import { IStatusReqBody } from '~/interfaces/requests'
+import { IStatusReqBody, IUpdateStatus } from '~/interfaces/requests'
 import { Status } from '~/models/schemas'
 
 class StatusService {
@@ -10,7 +10,7 @@ class StatusService {
     await newStatus.save()
     return newStatus
   }
-  async updateStatus(payload: IStatusReqBody, statusId: string): Promise<InstanceType<typeof Status>> {
+  async updateStatus(payload: IUpdateStatus, statusId: string): Promise<InstanceType<typeof Status>> {
     const updateStatus = await Status.findByIdAndUpdate({ _id: new ObjectId(statusId) }, { ...payload }, { new: true })
     return updateStatus as InstanceType<typeof Status>
   }

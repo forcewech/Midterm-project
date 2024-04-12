@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb'
-import { IPriorityReqBody } from '~/interfaces/requests'
+import { IPriorityReqBody, IUpdatePriority } from '~/interfaces/requests'
 import { Priority } from '~/models/schemas'
 
 class PriorityService {
@@ -10,7 +10,7 @@ class PriorityService {
     await newPriority.save()
     return newPriority
   }
-  async updatePriority(payload: IPriorityReqBody, priorityId: string): Promise<InstanceType<typeof Priority>> {
+  async updatePriority(payload: IUpdatePriority, priorityId: string): Promise<InstanceType<typeof Priority>> {
     const updatePriority = await Priority.findByIdAndUpdate(
       { _id: new ObjectId(priorityId) },
       { ...payload },

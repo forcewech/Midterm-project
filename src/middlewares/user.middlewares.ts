@@ -63,6 +63,7 @@ export const updateUserValidator = validate(
   checkSchema(
     {
       name: {
+        optional: true,
         isString: {
           errorMessage: userMessages.NAME_MUST_BE_A_STRING
         },
@@ -76,11 +77,13 @@ export const updateUserValidator = validate(
         trim: true
       },
       email: {
+        optional: true,
         isEmail: {
           errorMessage: userMessages.EMAIL_IS_INVALID
         }
       },
       dateOfBirth: {
+        optional: true,
         isISO8601: {
           options: {
             strict: true,
@@ -90,6 +93,7 @@ export const updateUserValidator = validate(
         }
       },
       status: {
+        optional: true,
         custom: {
           options: async (value) => {
             if (value) {
