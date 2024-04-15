@@ -41,6 +41,7 @@ taskRouter.post(
   accessTokenValidator,
   createTaskValidator,
   checkUsersInProject,
+  checkDateValidator,
   dateInProjectValidator,
   taskController.create
 )
@@ -50,6 +51,7 @@ taskRouter.put(
   updateTaskValidator,
   checkTaskIdValidator,
   checkUsersInProject,
+  checkDateValidator,
   dateInProjectValidator,
   taskController.update
 )
