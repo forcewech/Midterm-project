@@ -38,6 +38,15 @@ export const registerValidator = validate(
         },
         isEmail: {
           errorMessage: authMessages.EMAIL_IS_INVALID
+        },
+        custom: {
+          options: async (value) => {
+            const isExistEmailName = await authService.checkUserEmailExist(value)
+            if (isExistEmailName) {
+              throw new Error(authMessages.EMAIL_ALREADY_EXISTS)
+            }
+            return true
+          }
         }
       },
       userName: {

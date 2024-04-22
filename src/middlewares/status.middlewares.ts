@@ -11,6 +11,10 @@ export const createStatusValidator = validate(
         notEmpty: {
           errorMessage: statusMessages.NAME_IS_REQUIRED
         },
+        isLength: {
+          options: { max: 50 },
+          errorMessage: statusMessages.NAME_SHOULD_NOT_EXCEED_50_CHARACTERS
+        },
         isString: {
           errorMessage: statusMessages.NAME_MUST_BE_A_STRING
         },
@@ -49,6 +53,10 @@ export const updateStatusValidator = validate(
         optional: true,
         isString: {
           errorMessage: statusMessages.NAME_MUST_BE_A_STRING
+        },
+        isLength: {
+          options: { max: 50 },
+          errorMessage: statusMessages.NAME_SHOULD_NOT_EXCEED_50_CHARACTERS
         },
         custom: {
           options: async (value) => {

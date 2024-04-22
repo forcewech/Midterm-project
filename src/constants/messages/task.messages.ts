@@ -21,5 +21,6 @@ export const taskMessages = {
   ASSIGNED_TO_IS_REQUIRED: 'Assigned to is required',
   START_DATE_REQUIRED: 'Start date is required',
   END_DATE_REQUIRED: 'End date is required',
-  GET_MY_TASK_WITH_PAGINATE_SUCCESS: 'Get my task with paginate success'
+  GET_MY_TASK_WITH_PAGINATE_SUCCESS: 'Get my task with paginate success',
+  NAME_SHOULD_NOT_EXCEED_50_CHARACTERS: 'Name should not exceed 50 characters'
 }

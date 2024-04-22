@@ -1,4 +1,5 @@
 import { ObjectId } from 'mongodb'
+import { ENameStatus } from '~/constants/enums'
 import { IStatusReqBody, IUpdateStatus } from '~/interfaces/requests'
 import { Status } from '~/models/schemas'
 
@@ -7,11 +8,41 @@ class StatusService {
     const newStatus = new Status({
       ...payload
     })
+    const statusNew = await Status.findOne({ name: ENameStatus.NEW })
+    const statusClosed = await Status.findOne({ name: ENameStatus.CLOSED })
+    if (statusNew?.order) {
+      if (Number(payload.order) <= statusNew?.order) {
+        statusNew.order = Number(payload.order) - 1
+        await statusNew.save()
+      }
+    }
+    if (statusClosed?.order) {
+      if (Number(payload.order) >= statusClosed?.order) {
+        statusClosed.order = Number(payload.order) + 1
+        await statusClosed.save()
+      }
+    }
     await newStatus.save()
     return newStatus
   }
   async updateStatus(payload: IUpdateStatus, statusId: string): Promise<InstanceType<typeof Status>> {
     const updateStatus = await Status.findByIdAndUpdate({ _id: new ObjectId(statusId) }, { ...payload }, { new: true })
+    if (payload.order) {
+      const statusNew = await Status.findOne({ name: ENameStatus.NEW })
+      const statusClosed = await Status.findOne({ name: ENameStatus.CLOSED })
+      if (statusNew?.order && statusNew._id.toString() !== statusId) {
+        if (Number(payload.order) <= statusNew?.order) {
+          statusNew.order = Number(payload.order) - 1
+          await statusNew.save()
+        }
+      }
+      if (statusClosed?.order && statusClosed._id.toString() !== statusId) {
+        if (Number(payload.order) >= statusClosed?.order) {
+          statusClosed.order = Number(payload.order) + 1
+          await statusClosed.save()
+        }
+      }
+    }
     return updateStatus as InstanceType<typeof Status>
   }
   async hiddenStatus(statusId: string): Promise<InstanceType<typeof Status>> {

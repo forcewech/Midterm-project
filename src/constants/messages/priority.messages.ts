@@ -10,5 +10,6 @@ export const priorityMessages = {
   GET_ALL_PRIORITY_SUCCESS: 'Get all priority success',
   PRIORITY_HIDDEN_SUCCESS: 'Priority hidden success',
   ORDER_IS_REQUIRED: 'Order is required',
-  ORDER_IS_INVALID: 'Order is invalid'
+  ORDER_IS_INVALID: 'Order is invalid',
+  NAME_SHOULD_NOT_EXCEED_50_CHARACTERS: 'Name should not exceed 50 characters'
 }

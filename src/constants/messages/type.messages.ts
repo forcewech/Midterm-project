@@ -10,5 +10,6 @@ export const typeMessages = {
   GET_ALL_TYPE_SUCCESS: 'Get all type success',
   TYPE_HIDDEN_SUCCESS: 'Type hidden success',
   COLOR_IS_REQUIRED: 'Color is required',
-  COLOR_MUST_BE_A_STRING: 'Color must be a string'
+  COLOR_MUST_BE_A_STRING: 'Color must be a string',
+  NAME_SHOULD_NOT_EXCEED_50_CHARACTERS: 'Name should not exceed 50 characters'
 }

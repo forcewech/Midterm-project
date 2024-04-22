@@ -1,8 +1,8 @@
 import { checkSchema } from 'express-validator'
 import { ObjectId } from 'mongodb'
 import { EUserStatus } from '~/constants/enums'
-import { userMessages } from '~/constants/messages'
-import { userService } from '~/services'
+import { authMessages, userMessages } from '~/constants/messages'
+import { authService, userService } from '~/services'
 import { validate } from '~/utils/validation'
 
 export const getAllUserValidator = validate(
@@ -80,6 +80,15 @@ export const updateUserValidator = validate(
         optional: true,
         isEmail: {
           errorMessage: userMessages.EMAIL_IS_INVALID
+        },
+        custom: {
+          options: async (value) => {
+            const isExistEmailName = await authService.checkUserEmailExist(value)
+            if (isExistEmailName) {
+              throw new Error(authMessages.EMAIL_ALREADY_EXISTS)
+            }
+            return true
+          }
         }
       },
       dateOfBirth: {

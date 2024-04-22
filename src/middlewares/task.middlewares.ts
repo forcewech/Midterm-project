@@ -24,6 +24,10 @@ export const createTaskValidator = validate(
         notEmpty: {
           errorMessage: taskMessages.NAME_IS_REQUIRED
         },
+        isLength: {
+          options: { max: 50 },
+          errorMessage: taskMessages.NAME_SHOULD_NOT_EXCEED_50_CHARACTERS
+        },
         isString: {
           errorMessage: taskMessages.NAME_MUST_BE_A_STRING
         },
@@ -162,6 +166,10 @@ export const updateTaskValidator = validate(
     {
       name: {
         optional: true,
+        isLength: {
+          options: { max: 50 },
+          errorMessage: taskMessages.NAME_SHOULD_NOT_EXCEED_50_CHARACTERS
+        },
         custom: {
           options: async (value) => {
             if (value) {

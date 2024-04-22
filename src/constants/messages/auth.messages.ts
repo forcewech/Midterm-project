@@ -31,5 +31,6 @@ export const authMessages = {
   INVITE_ID_IS_INACTIVE: 'Invite id is inactive',
   INVITE_ID_IS_REQUIRED: 'Invite id is required',
   YOUR_ACCOUNT_IS_CURRENTLY_INACTIVE: 'Your account is currently inactive',
-  FORBIDDEN_ACCESS_DENIED: 'Forbidden Access denied'
+  FORBIDDEN_ACCESS_DENIED: 'Forbidden Access denied',
+  EMAIL_ALREADY_EXISTS: 'Email already exists'
 } as const
