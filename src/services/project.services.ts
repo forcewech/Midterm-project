@@ -218,7 +218,7 @@ class ProjectService {
   async addParticipant(projectId: string, participant: ObjectId): Promise<void> {
     const project = (await Project.findById({ _id: new ObjectId(projectId) })) as InstanceType<typeof Project>
     project.participants.push(participant)
-    project.save()
+    await project.save()
     await User.findByIdAndUpdate({ _id: participant }, { $push: { projects: new ObjectId(projectId) } }, { new: true })
   }
   async deleteParticipant(projectId: string, participant: ObjectId): Promise<void> {

@@ -11,5 +11,6 @@ export const statusMessages = {
   STATUS_HIDDEN_SUCCESS: 'Status hidden success',
   ORDER_IS_REQUIRED: 'Name is required',
   ORDER_MUST_BE_A_STRING: 'Name must be a string',
-  ORDER_IS_INVALID: 'Order is invalid'
+  ORDER_IS_INVALID: 'Order is invalid',
+  NAME_SHOULD_NOT_EXCEED_50_CHARACTERS: 'Name should not exceed 50 characters'
 }

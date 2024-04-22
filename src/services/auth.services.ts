@@ -46,6 +46,10 @@ class AuthService {
     const user = await User.findOne({ userName })
     return Boolean(user)
   }
+  async checkUserEmailExist(email: string): Promise<boolean> {
+    const user = await User.findOne({ email })
+    return Boolean(user)
+  }
   async register(payload: IRegisterReqBody, projectId: ObjectId): Promise<IToken> {
     if (!Array.isArray(payload.projects)) {
       payload.projects = []

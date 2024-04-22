@@ -14,6 +14,10 @@ export const createPriorityValidator = validate(
         isString: {
           errorMessage: priorityMessages.NAME_MUST_BE_A_STRING
         },
+        isLength: {
+          options: { max: 50 },
+          errorMessage: priorityMessages.NAME_SHOULD_NOT_EXCEED_50_CHARACTERS
+        },
         custom: {
           options: async (value) => {
             const isExistPriority = await priorityService.checkPriorityExist(value)
@@ -47,6 +51,10 @@ export const updatePriorityValidator = validate(
     {
       name: {
         optional: true,
+        isLength: {
+          options: { max: 50 },
+          errorMessage: priorityMessages.NAME_SHOULD_NOT_EXCEED_50_CHARACTERS
+        },
         custom: {
           options: async (value) => {
             const isExistPriority = await priorityService.checkPriorityExist(value)

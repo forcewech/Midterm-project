@@ -29,5 +29,6 @@ export const projectMessages = {
   START_DATE_CANNOT_BE_AFTER_END_DATE: 'Start date cannot be after end date',
   PARTICIPANT_NOT_EXIST: 'Participant not exist',
   GET_ALL_MY_PROJECTS: 'Get all my projects',
-  START_DATE_CANNOT_START_IN_THE_PAST: 'Start date cannot start in the past'
+  START_DATE_CANNOT_START_IN_THE_PAST: 'Start date cannot start in the past',
+  NAME_SHOULD_NOT_EXCEED_50_CHARACTERS: 'Name should not exceed 50 characters'
 }

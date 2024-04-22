@@ -19,6 +19,10 @@ export const createProjectValidator = validate(
         isString: {
           errorMessage: projectMessages.NAME_MUST_BE_A_STRING
         },
+        isLength: {
+          options: { max: 50 },
+          errorMessage: projectMessages.NAME_SHOULD_NOT_EXCEED_50_CHARACTERS
+        },
         custom: {
           options: async (value) => {
             const isExistProject = await projectService.checkProjectExist(value)
@@ -62,6 +66,10 @@ export const updateProjectValidator = validate(
   checkSchema({
     name: {
       optional: true,
+      isLength: {
+        options: { max: 50 },
+        errorMessage: projectMessages.NAME_SHOULD_NOT_EXCEED_50_CHARACTERS
+      },
       custom: {
         options: async (value) => {
           if (value) {
